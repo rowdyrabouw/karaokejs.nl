@@ -8,7 +8,7 @@
   --surface: #1b1917;
   --surface-raised: #211f1c;
   --muted: #8b8780;
-  --accent: #d7fa6b;
+  --accent: #ffd074;
   --line: rgba(255, 255, 255, 0.09);
 }
 
@@ -99,7 +99,7 @@ main {
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   background:
-    radial-gradient(ellipse at 50% 65%, rgba(215, 250, 107, 0.12), transparent 42%),
+    radial-gradient(ellipse at 50% 65%, rgba(255, 208, 116, 0.12), transparent 42%),
     radial-gradient(ellipse at 50% 115%, rgba(211, 92, 48, 0.12), transparent 50%),
     linear-gradient(140deg, #29251f, #171513 66%);
   text-align: center;
@@ -111,7 +111,7 @@ main {
   z-index: 0;
   width: 300px;
   height: 300px;
-  border: 1px solid rgba(215, 250, 107, 0.09);
+  border: 1px solid rgba(255, 208, 116, 0.09);
   border-radius: 50%;
   content: "";
   pointer-events: none;
@@ -164,7 +164,7 @@ main {
   height: 6px;
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 14px rgba(215, 250, 107, 0.7);
+  box-shadow: 0 0 14px rgba(255, 208, 116, 0.7);
 }
 
 .track-number {
@@ -250,7 +250,7 @@ main {
   overflow: hidden;
   border-radius: 7px;
   background:
-    radial-gradient(circle at 50% 45%, rgba(215, 250, 107, 0.22), transparent 34%),
+    radial-gradient(circle at 50% 45%, rgba(255, 208, 116, 0.22), transparent 34%),
     linear-gradient(145deg, #39352a, #171613 70%);
 }
 
@@ -279,8 +279,27 @@ main {
 }
 
 .song-details .eyebrow {
+  display: block;
   margin-bottom: 7px;
   font-size: 9px;
+}
+
+.song-select {
+  width: 100%;
+  margin: 0 0 12px;
+  padding: 9px 28px 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #151412;
+  color: #f5f2ec;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+}
+
+.song-select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 
 .song-details h2 {
@@ -350,7 +369,7 @@ main {
 
 .track-option.is-selected {
   background: var(--accent);
-  color: #191b12;
+  color: #11171a;
 }
 
 .timeline {
@@ -497,12 +516,12 @@ main {
   height: 45px;
   border-radius: 50%;
   background: var(--accent);
-  color: #191b12;
+  color: #11171a;
 }
 
 .play-button:hover:not(:disabled) {
   transform: scale(1.06);
-  background: #e3ff8b;
+  background: #ffe0a0;
 }
 
 .play-button:disabled {
@@ -626,8 +645,8 @@ main {
 }
 
 .lyrics-list li.is-active {
-  border-color: rgba(215, 250, 107, 0.14);
-  background: rgba(215, 250, 107, 0.055);
+  border-color: rgba(255, 208, 116, 0.14);
+  background: rgba(255, 208, 116, 0.055);
 }
 
 .lyrics-list li.is-active button {

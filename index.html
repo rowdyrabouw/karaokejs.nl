@@ -10,8 +10,8 @@
     />
     <title>KaraokeJS — Chasing Cars</title>
     <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=3" />
-    <script src="assets/js/app.js?v=3" defer></script>
+    <link rel="stylesheet" href="styles.css?v=6" />
+    <script src="assets/js/app.js?v=6" defer></script>
   </head>
   <body>
     <div class="app-shell">
@@ -28,7 +28,7 @@
           <div class="stage">
             <div class="stage-topline">
               <span class="live-indicator"><span></span> NOW SINGING</span>
-              <span class="track-number">01 / 01</span>
+              <span class="track-number" id="song-number">01 / 02</span>
             </div>
             <div class="stage-content" aria-live="polite" aria-atomic="true">
               <h1 id="current-lyric"></h1>
@@ -47,28 +47,27 @@
               <span class="art-label">KARAOKE<br />SESSION</span>
             </div>
             <div class="song-details">
-              <p class="eyebrow">YOUR SONG</p>
-              <h2>Chasing Cars</h2>
-              <p>Snow Patrol</p>
+              <label class="eyebrow" for="song-select">SELECT A SONG</label>
+              <select id="song-select" class="song-select">
+                <option value="chasing-cars">Chasing Cars — Snow Patrol</option>
+                <option value="with-or-without-you">With or Without You — U2</option>
+              </select>
+              <h2 id="song-title">Chasing Cars</h2>
+              <p id="song-artist">Snow Patrol</p>
             </div>
             <div class="song-meta">
               <span>English</span>
               <span class="meta-separator"></span>
-              <span>Alternative</span>
+              <span id="song-genre">Alternative</span>
             </div>
           </aside>
         </section>
 
         <section class="controls-panel" aria-label="Audio controls">
-          <audio
-            id="audio"
-            src="assets/audio/snow-patrol-chasing-cars.mp3"
-            preload="metadata"
-          >
+          <audio id="audio" preload="metadata">
             <track
               id="captions"
               kind="captions"
-              src="assets/vtt/snow-patrol-chasing-cars.vtt"
               srclang="en"
               label="English"
               default

@@ -11,12 +11,32 @@ const lyricsList = document.querySelector("#lyrics-list");
 const playerMessage = document.querySelector("#player-message");
 const vocalTrackButton = document.querySelector("#track-vocals");
 const instrumentalTrackButton = document.querySelector("#track-instrumental");
+const songSelect = document.querySelector("#song-select");
+const songTitle = document.querySelector("#song-title");
+const songArtist = document.querySelector("#song-artist");
+const songGenre = document.querySelector("#song-genre");
+const songNumber = document.querySelector("#song-number");
 
 const lyricLeadIn = 0.65;
-const trackSources = {
-  vocals: "assets/audio/snow-patrol-chasing-cars.mp3",
-  instrumental: "assets/audio/snow-patrol-chasing-cars-instrumental.mp3",
+const songs = {
+  "chasing-cars": {
+    title: "Chasing Cars",
+    artist: "Snow Patrol",
+    genre: "Alternative",
+    vocals: "assets/audio/snow-patrol-chasing-cars.mp3",
+    instrumental: "assets/audio/snow-patrol-chasing-cars-instrumental.mp3",
+    lyrics: "assets/vtt/snow-patrol-chasing-cars.vtt",
+  },
+  "with-or-without-you": {
+    title: "With or Without You",
+    artist: "U2",
+    genre: "Rock",
+    vocals: "assets/audio/u2-with-or-without-you-vocals-playback.mp3",
+    instrumental: "assets/audio/u2-with-or-without-you-instrumental-playback.mp3",
+    lyrics: "assets/vtt/u2-with-or-without-you.vtt",
+  },
 };
+const songIds = Object.keys(songs);
 let cues = [];
 let activeCueIndex = -1;
 let hasStarted = false;
@@ -27,8 +47,20 @@ let audioContext;
 let gainNode;
 let muted = false;
 let volumeBeforeMute = Number(volumeSlider.value);
+let currentSongId = songSelect.value;
 let currentTrack = "vocals";
 let pendingTrackChange = null;
+let songRequestId = 0;
+let audioReady = false;
+let lyricsReady = false;
+
+function getTrackSource(track, songId = currentSongId) {
+  return songs[songId][track];
+}
+
+function isCurrentAudioSource() {
+  return audio.currentSrc === new URL(getTrackSource(currentTrack), document.baseURI).href;
+}
 
 function showMessage(message, isError = false) {
   playerMessage.textContent = message;
@@ -100,7 +132,7 @@ function formatTime(seconds) {
 
 function renderLyrics() {
   const fragment = document.createDocumentFragment();
-  cues.forEach((cue, index) => {
+  cues.forEach((cue) => {
     const item = document.createElement("li");
     const button = document.createElement("button");
     button.type = "button";
@@ -261,6 +293,48 @@ function updatePlayButton() {
   playButton.title = isPlaying ? "Pause" : "Play";
 }
 
+function updateTrackButtons() {
+  const vocalsSelected = currentTrack === "vocals";
+  vocalTrackButton.classList.toggle("is-selected", vocalsSelected);
+  vocalTrackButton.setAttribute("aria-pressed", String(vocalsSelected));
+  instrumentalTrackButton.classList.toggle("is-selected", !vocalsSelected);
+  instrumentalTrackButton.setAttribute("aria-pressed", String(!vocalsSelected));
+}
+
+function updateSongDetails() {
+  const song = songs[currentSongId];
+  songTitle.textContent = song.title;
+  songArtist.textContent = song.artist;
+  songGenre.textContent = song.genre;
+  songNumber.textContent = `${String(songIds.indexOf(currentSongId) + 1).padStart(2, "0")} / ${String(songIds.length).padStart(2, "0")}`;
+  document.title = `KaraokeJS — ${song.title}`;
+}
+
+function updateLoadState() {
+  const isReady = audioReady && lyricsReady;
+  playButton.disabled = !isReady;
+  seekSlider.disabled = !isReady;
+  if (!isReady) {
+    return;
+  }
+
+  if (pendingTrackChange) {
+    const { position, shouldResume } = pendingTrackChange;
+    pendingTrackChange = null;
+    audio.currentTime = Math.min(position, audio.duration);
+    updateTimeline();
+    updateActiveCue(audio.currentTime);
+    if (shouldResume) {
+      playAudio();
+    } else {
+      showMessage(`Ready — ${currentTrack === "vocals" ? "vocals" : "instrumental"} track selected.`);
+    }
+    return;
+  }
+
+  showMessage("Ready when you are — press play to start.");
+}
+
 function updateTimeline() {
   currentTimeLabel.textContent = formatTime(audio.currentTime);
   if (Number.isFinite(audio.duration) && audio.duration > 0) {
@@ -284,43 +358,97 @@ function selectTrack(track) {
   audio.pause();
   currentTrack = track;
   pendingTrackChange = { position, shouldResume };
-
-  const vocalsSelected = track === "vocals";
-  vocalTrackButton.classList.toggle("is-selected", vocalsSelected);
-  vocalTrackButton.setAttribute("aria-pressed", String(vocalsSelected));
-  instrumentalTrackButton.classList.toggle("is-selected", !vocalsSelected);
-  instrumentalTrackButton.setAttribute("aria-pressed", String(!vocalsSelected));
-
-  playButton.disabled = true;
-  seekSlider.disabled = true;
-  showMessage(`Loading ${vocalsSelected ? "vocal" : "instrumental"} track…`);
-  audio.src = trackSources[track];
+  audioReady = false;
+  updateTrackButtons();
+  updateLoadState();
+  showMessage(`Loading ${track === "vocals" ? "vocal" : "instrumental"} track…`);
+  audio.src = getTrackSource(track);
   audio.load();
 }
 
-function handleLoadedMetadata() {
-  durationLabel.textContent = formatTime(audio.duration);
-  seekSlider.disabled = false;
-  volumeSlider.disabled = false;
-  muteButton.disabled = false;
-  playButton.disabled = false;
-
-  if (pendingTrackChange) {
-    const { position, shouldResume } = pendingTrackChange;
-    pendingTrackChange = null;
-    audio.currentTime = Math.min(position, audio.duration);
-    updateTimeline();
-    updateActiveCue(audio.currentTime);
-    if (shouldResume) {
-      playAudio();
-    } else {
-      showMessage(`Ready — ${currentTrack === "vocals" ? "vocals" : "instrumental"} track selected.`);
+async function loadLyrics(songId, requestId) {
+  const song = songs[songId];
+  try {
+    const response = await fetch(song.lyrics);
+    if (!response.ok) {
+      throw new Error(`Couldn't load lyrics (${response.status}).`);
     }
+    const vtt = await response.text();
+    const parsedCues = parseVtt(vtt);
+    if (parsedCues.length === 0) {
+      throw new Error("The captions file contains no usable lyric cues.");
+    }
+    if (requestId !== songRequestId) {
+      return;
+    }
+
+    cues = parsedCues;
+    lyricsReady = true;
+    renderLyrics();
+    updateActiveCue(audio.currentTime);
+    updateLoadState();
+  } catch (error) {
+    if (requestId !== songRequestId) {
+      return;
+    }
+    lyricsReady = false;
+    cues = [];
+    lyricsList.replaceChildren();
+    const placeholder = document.createElement("li");
+    placeholder.className = "lyrics-placeholder";
+    placeholder.textContent = error.message || "Couldn't load the lyrics.";
+    lyricsList.append(placeholder);
+    updateLoadState();
+    showMessage(error.message || "Couldn't load the lyrics.", true);
+  }
+}
+
+function selectSong(songId) {
+  if (!songs[songId] || songId === currentSongId) {
     return;
   }
 
+  const requestId = ++songRequestId;
+  currentSongId = songId;
+  currentTrack = "vocals";
+  pendingTrackChange = null;
+  audio.pause();
+  audioReady = false;
+  lyricsReady = false;
+  cues = [];
+  activeCueIndex = -1;
+  hasStarted = false;
+  renderStageCue("");
+  nextLyric.textContent = "";
+  lyricsList.replaceChildren();
+  const placeholder = document.createElement("li");
+  placeholder.className = "lyrics-placeholder";
+  placeholder.textContent = "Loading synchronized lyrics…";
+  lyricsList.append(placeholder);
+  currentTimeLabel.textContent = "0:00";
+  durationLabel.textContent = "0:00";
+  seekSlider.value = "0";
+  seekSlider.style.setProperty("--progress", "0%");
+  updateSongDetails();
+  updateTrackButtons();
+  updateLoadState();
+  showMessage("Loading song and lyrics…");
+
+  audio.src = getTrackSource("vocals");
+  audio.load();
+  loadLyrics(songId, requestId);
+}
+
+function handleLoadedMetadata() {
+  if (!isCurrentAudioSource()) {
+    return;
+  }
+  audioReady = true;
+  durationLabel.textContent = formatTime(audio.duration);
+  volumeSlider.disabled = false;
+  muteButton.disabled = false;
   updateTimeline();
-  showMessage("Ready when you are — press play to start.");
+  updateLoadState();
 }
 
 function updateVolume() {
@@ -388,6 +516,7 @@ seekSlider.addEventListener("input", () => {
 
 vocalTrackButton.addEventListener("click", () => selectTrack("vocals"));
 instrumentalTrackButton.addEventListener("click", () => selectTrack("instrumental"));
+songSelect.addEventListener("change", () => selectSong(songSelect.value));
 
 audio.addEventListener("loadedmetadata", handleLoadedMetadata);
 
@@ -415,11 +544,14 @@ audio.addEventListener("ended", () => {
 });
 
 audio.addEventListener("error", () => {
+  if (!isCurrentAudioSource()) {
+    return;
+  }
+  audioReady = false;
   pendingTrackChange = null;
-  playButton.disabled = true;
-  seekSlider.disabled = true;
+  updateLoadState();
   showMessage(
-    `Audio couldn't be loaded. Check ${trackSources[currentTrack]}.`,
+    `Audio couldn't be loaded. Check ${getTrackSource(currentTrack)}.`,
     true,
   );
 });
@@ -431,6 +563,7 @@ document.addEventListener("keydown", (event) => {
     event.ctrlKey ||
     event.metaKey ||
     event.target instanceof HTMLButtonElement ||
+    event.target instanceof HTMLSelectElement ||
     event.target instanceof HTMLInputElement ||
     event.target instanceof HTMLTextAreaElement
   ) {
@@ -444,39 +577,9 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-fetch("assets/vtt/snow-patrol-chasing-cars.vtt")
-  .then((response) => {
-    if (!response.ok) {
-      throw new Error(`Couldn't load lyrics (${response.status}).`);
-    }
-    return response.text();
-  })
-  .then((vtt) => {
-    cues = parseVtt(vtt);
-    if (cues.length === 0) {
-      throw new Error("The captions file contains no usable lyric cues.");
-    }
-    renderLyrics();
-    updateActiveCue(0);
-    if (audio.error) {
-      showMessage(
-        "Lyrics are ready, but audio couldn't be loaded. Add a valid MP3 at assets/audio/snow-patrol-chasing-cars.mp3.",
-        true,
-      );
-    } else if (audio.readyState >= HTMLMediaElement.HAVE_METADATA) {
-      showMessage("Ready when you are — press play to start.");
-    } else {
-      showMessage("Lyrics ready — loading the track…");
-    }
-  })
-  .catch((error) => {
-    lyricsList.replaceChildren();
-    const placeholder = document.createElement("li");
-    placeholder.className = "lyrics-placeholder";
-    placeholder.textContent = error.message || "Couldn't load the lyrics.";
-    lyricsList.append(placeholder);
-    showMessage(error.message || "Couldn't load the lyrics.", true);
-  });
+audio.src = getTrackSource(currentTrack);
+audio.load();
+loadLyrics(currentSongId, songRequestId);
 
 updateVolume();
 
