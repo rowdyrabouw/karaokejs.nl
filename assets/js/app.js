@@ -9,13 +9,26 @@ const currentLyric = document.querySelector("#current-lyric");
 const nextLyric = document.querySelector("#next-lyric");
 const lyricsList = document.querySelector("#lyrics-list");
 const playerMessage = document.querySelector("#player-message");
+const vocalTrackButton = document.querySelector("#track-vocals");
+const instrumentalTrackButton = document.querySelector("#track-instrumental");
 
+const lyricLeadIn = 0.65;
+const trackSources = {
+  vocals: "assets/audio/snow-patrol-chasing-cars.mp3",
+  instrumental: "assets/audio/snow-patrol-chasing-cars-instrumental.mp3",
+};
 let cues = [];
 let activeCueIndex = -1;
+let hasStarted = false;
+let stageLetters = [];
+let highlightedLetterCount = 0;
+let lyricAnimationFrame = null;
 let audioContext;
 let gainNode;
 let muted = false;
 let volumeBeforeMute = Number(volumeSlider.value);
+let currentTrack = "vocals";
+let pendingTrackChange = null;
 
 function showMessage(message, isError = false) {
   playerMessage.textContent = message;
@@ -109,14 +122,58 @@ function renderLyrics() {
   lyricsList.replaceChildren(fragment);
 }
 
+function renderStageCue(text) {
+  const fragment = document.createDocumentFragment();
+  stageLetters = [];
+  highlightedLetterCount = 0;
+
+  for (const character of text) {
+    if (character === "\n") {
+      fragment.append(document.createElement("br"));
+    } else if (/\s/.test(character)) {
+      fragment.append(document.createTextNode(character));
+    } else {
+      const letter = document.createElement("span");
+      letter.className = "lyric-letter";
+      letter.textContent = character;
+      stageLetters.push(letter);
+      fragment.append(letter);
+    }
+  }
+
+  currentLyric.replaceChildren(fragment);
+}
+
+function updateLyricHighlight(time) {
+  const cue = cues[activeCueIndex];
+  if (!cue || stageLetters.length === 0) {
+    return;
+  }
+
+  const progress = Math.max(0, Math.min(1, (time - cue.start) / (cue.end - cue.start)));
+  const nextHighlightedCount = Math.ceil(progress * stageLetters.length);
+
+  for (let index = highlightedLetterCount; index < nextHighlightedCount; index += 1) {
+    stageLetters[index].classList.add("is-sung");
+  }
+  for (let index = nextHighlightedCount; index < highlightedLetterCount; index += 1) {
+    stageLetters[index].classList.remove("is-sung");
+  }
+  highlightedLetterCount = nextHighlightedCount;
+}
+
 function updateActiveCue(time) {
+  if (!hasStarted) {
+    return;
+  }
+
   let low = 0;
   let high = cues.length - 1;
   let candidate = -1;
 
   while (low <= high) {
     const middle = Math.floor((low + high) / 2);
-    if (cues[middle].start <= time) {
+    if (cues[middle].start - lyricLeadIn <= time) {
       candidate = middle;
       low = middle + 1;
     } else {
@@ -126,6 +183,7 @@ function updateActiveCue(time) {
 
   const current = candidate >= 0 && time < cues[candidate].end ? candidate : -1;
   if (current === activeCueIndex) {
+    updateLyricHighlight(time);
     return;
   }
 
@@ -138,17 +196,34 @@ function updateActiveCue(time) {
   }
 
   if (current < 0) {
-    currentLyric.textContent = "Chasing Cars";
+    renderStageCue("");
     nextLyric.textContent =
       candidate >= 0 && candidate + 1 < cues.length
         ? cues[candidate + 1].text
-        : "Let the music take you there";
+        : "";
     return;
   }
 
-  currentLyric.textContent = cues[current].text;
+  renderStageCue(cues[current].text);
   nextLyric.textContent = cues[current + 1]?.text ?? "Let the music take you there";
-  lyricItems[current]?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  updateLyricHighlight(time);
+}
+
+function animateLyrics() {
+  updateActiveCue(audio.currentTime);
+  if (!audio.paused && !audio.ended) {
+    lyricAnimationFrame = requestAnimationFrame(animateLyrics);
+  } else {
+    lyricAnimationFrame = null;
+  }
+}
+
+function stopLyricAnimation() {
+  if (lyricAnimationFrame !== null) {
+    cancelAnimationFrame(lyricAnimationFrame);
+    lyricAnimationFrame = null;
+  }
+  updateActiveCue(audio.currentTime);
 }
 
 async function initializeAudioContext() {
@@ -186,12 +261,65 @@ function updatePlayButton() {
   playButton.title = isPlaying ? "Pause" : "Play";
 }
 
+function updateTimeline() {
+  currentTimeLabel.textContent = formatTime(audio.currentTime);
+  if (Number.isFinite(audio.duration) && audio.duration > 0) {
+    const progress = (audio.currentTime / audio.duration) * 100;
+    seekSlider.value = String(progress);
+    seekSlider.style.setProperty("--progress", `${progress}%`);
+    seekSlider.setAttribute(
+      "aria-valuetext",
+      `${formatTime(audio.currentTime)} of ${formatTime(audio.duration)}`,
+    );
+  }
+}
+
+function selectTrack(track) {
+  if (track === currentTrack) {
+    return;
+  }
+
+  const position = pendingTrackChange?.position ?? audio.currentTime;
+  const shouldResume = pendingTrackChange?.shouldResume ?? !audio.paused;
+  audio.pause();
+  currentTrack = track;
+  pendingTrackChange = { position, shouldResume };
+
+  const vocalsSelected = track === "vocals";
+  vocalTrackButton.classList.toggle("is-selected", vocalsSelected);
+  vocalTrackButton.setAttribute("aria-pressed", String(vocalsSelected));
+  instrumentalTrackButton.classList.toggle("is-selected", !vocalsSelected);
+  instrumentalTrackButton.setAttribute("aria-pressed", String(!vocalsSelected));
+
+  playButton.disabled = true;
+  seekSlider.disabled = true;
+  showMessage(`Loading ${vocalsSelected ? "vocal" : "instrumental"} track…`);
+  audio.src = trackSources[track];
+  audio.load();
+}
+
 function handleLoadedMetadata() {
   durationLabel.textContent = formatTime(audio.duration);
   seekSlider.disabled = false;
   volumeSlider.disabled = false;
   muteButton.disabled = false;
   playButton.disabled = false;
+
+  if (pendingTrackChange) {
+    const { position, shouldResume } = pendingTrackChange;
+    pendingTrackChange = null;
+    audio.currentTime = Math.min(position, audio.duration);
+    updateTimeline();
+    updateActiveCue(audio.currentTime);
+    if (shouldResume) {
+      playAudio();
+    } else {
+      showMessage(`Ready — ${currentTrack === "vocals" ? "vocals" : "instrumental"} track selected.`);
+    }
+    return;
+  }
+
+  updateTimeline();
   showMessage("Ready when you are — press play to start.");
 }
 
@@ -254,38 +382,44 @@ volumeSlider.addEventListener("input", () => {
 seekSlider.addEventListener("input", () => {
   if (Number.isFinite(audio.duration)) {
     audio.currentTime = (Number(seekSlider.value) / 100) * audio.duration;
+    updateTimeline();
   }
 });
+
+vocalTrackButton.addEventListener("click", () => selectTrack("vocals"));
+instrumentalTrackButton.addEventListener("click", () => selectTrack("instrumental"));
 
 audio.addEventListener("loadedmetadata", handleLoadedMetadata);
 
 audio.addEventListener("timeupdate", () => {
-  currentTimeLabel.textContent = formatTime(audio.currentTime);
+  updateTimeline();
   updateActiveCue(audio.currentTime);
-  if (Number.isFinite(audio.duration) && audio.duration > 0) {
-    const progress = (audio.currentTime / audio.duration) * 100;
-    seekSlider.value = String(progress);
-    seekSlider.style.setProperty("--progress", `${progress}%`);
-    seekSlider.setAttribute(
-      "aria-valuetext",
-      `${formatTime(audio.currentTime)} of ${formatTime(audio.duration)}`,
-    );
-  }
 });
 
-audio.addEventListener("play", updatePlayButton);
-audio.addEventListener("pause", updatePlayButton);
-audio.addEventListener("ended", () => {
+audio.addEventListener("play", () => {
+  hasStarted = true;
   updatePlayButton();
   updateActiveCue(audio.currentTime);
+  if (lyricAnimationFrame === null) {
+    lyricAnimationFrame = requestAnimationFrame(animateLyrics);
+  }
+});
+audio.addEventListener("pause", () => {
+  updatePlayButton();
+  stopLyricAnimation();
+});
+audio.addEventListener("ended", () => {
+  updatePlayButton();
+  stopLyricAnimation();
   showMessage("Song finished — want to sing it again?");
 });
 
 audio.addEventListener("error", () => {
+  pendingTrackChange = null;
   playButton.disabled = true;
   seekSlider.disabled = true;
   showMessage(
-    "Audio couldn't be loaded. Add a valid MP3 at assets/audio/snow-patrol-chasing-cars.mp3.",
+    `Audio couldn't be loaded. Check ${trackSources[currentTrack]}.`,
     true,
   );
 });

@@ -10,8 +10,8 @@
     />
     <title>KaraokeJS — Chasing Cars</title>
     <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css" />
-    <script src="assets/js/app.js" defer></script>
+    <link rel="stylesheet" href="styles.css?v=3" />
+    <script src="assets/js/app.js?v=3" defer></script>
   </head>
   <body>
     <div class="app-shell">
@@ -31,9 +31,8 @@
               <span class="track-number">01 / 01</span>
             </div>
             <div class="stage-content" aria-live="polite" aria-atomic="true">
-              <p class="stage-eyebrow">Snow Patrol</p>
-              <h1 id="current-lyric">Chasing Cars</h1>
-              <p class="stage-next" id="next-lyric">Your lyrics are getting ready…</p>
+              <h1 id="current-lyric"></h1>
+              <p class="stage-next" id="next-lyric"></p>
             </div>
             <div class="stage-footer">
               <span class="stage-dot"></span>
@@ -61,11 +60,11 @@
         </section>
 
         <section class="controls-panel" aria-label="Audio controls">
-          <audio id="audio" preload="metadata">
-            <source
-              src="assets/audio/snow-patrol-chasing-cars.mp3"
-              type="audio/mpeg"
-            />
+          <audio
+            id="audio"
+            src="assets/audio/snow-patrol-chasing-cars.mp3"
+            preload="metadata"
+          >
             <track
               id="captions"
               kind="captions"
@@ -75,6 +74,25 @@
               default
             />
           </audio>
+
+          <div class="track-switch" role="group" aria-label="Audio track">
+            <button
+              class="track-option is-selected"
+              id="track-vocals"
+              type="button"
+              aria-pressed="true"
+            >
+              With vocals
+            </button>
+            <button
+              class="track-option"
+              id="track-instrumental"
+              type="button"
+              aria-pressed="false"
+            >
+              Instrumental
+            </button>
+          </div>
 
           <div class="timeline">
             <span class="time" id="current-time">0:00</span>
