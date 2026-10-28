@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#11100f" />
+    <meta
+      name="description"
+      content="Sing along with synchronized lyrics in the KaraokeJS player."
+    />
+    <title>KaraokeJS — Chasing Cars</title>
+    <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="assets/js/app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="site-header">
+        <a class="brand" href="./" aria-label="KaraokeJS home">
+          <img src="assets/img/logo.svg" alt="" />
+          <span>Karaoke<span class="brand-accent">JS</span></span>
+        </a>
+        <p class="header-note">Sing it your way</p>
+      </header>
+
+      <main>
+        <section class="player-layout" aria-label="Karaoke player">
+          <div class="stage">
+            <div class="stage-topline">
+              <span class="live-indicator"><span></span> NOW SINGING</span>
+              <span class="track-number">01 / 01</span>
+            </div>
+            <div class="stage-content" aria-live="polite" aria-atomic="true">
+              <p class="stage-eyebrow">Snow Patrol</p>
+              <h1 id="current-lyric">Chasing Cars</h1>
+              <p class="stage-next" id="next-lyric">Your lyrics are getting ready…</p>
+            </div>
+            <div class="stage-footer">
+              <span class="stage-dot"></span>
+              <span>Take the mic</span>
+              <span class="stage-dot"></span>
+            </div>
+          </div>
+
+          <aside class="song-card" aria-label="Now playing">
+            <div class="album-art">
+              <img src="assets/img/logo.svg" alt="" />
+              <span class="art-label">KARAOKE<br />SESSION</span>
+            </div>
+            <div class="song-details">
+              <p class="eyebrow">YOUR SONG</p>
+              <h2>Chasing Cars</h2>
+              <p>Snow Patrol</p>
+            </div>
+            <div class="song-meta">
+              <span>English</span>
+              <span class="meta-separator"></span>
+              <span>Alternative</span>
+            </div>
+          </aside>
+        </section>
+
+        <section class="controls-panel" aria-label="Audio controls">
+          <audio id="audio" preload="metadata">
+            <source
+              src="assets/audio/snow-patrol-chasing-cars.mp3"
+              type="audio/mpeg"
+            />
+            <track
+              id="captions"
+              kind="captions"
+              src="assets/vtt/snow-patrol-chasing-cars.vtt"
+              srclang="en"
+              label="English"
+              default
+            />
+          </audio>
+
+          <div class="timeline">
+            <span class="time" id="current-time">0:00</span>
+            <label class="sr-only" for="seek">Seek through song</label>
+            <input
+              id="seek"
+              class="range seek-range"
+              type="range"
+              min="0"
+              max="100"
+              value="0"
+              step="0.1"
+              aria-valuetext="0:00 of 0:00"
+              disabled
+            />
+            <span class="time" id="duration">0:00</span>
+          </div>
+
+          <div class="control-row">
+            <div class="control-spacer"></div>
+            <div class="transport">
+              <button
+                class="icon-button skip-button"
+                id="back"
+                type="button"
+                aria-label="Go back 10 seconds"
+                title="Back 10 seconds"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 12a9 9 0 1 0 2.64-6.36L3 8.3" />
+                  <path d="M3 3v5.3h5.3M12 8v8m-2-6 2-2 2 2" />
+                </svg>
+              </button>
+              <button
+                class="play-button"
+                id="play"
+                type="button"
+                aria-label="Play"
+                disabled
+              >
+                <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m8 5 11 7-11 7z" />
+                </svg>
+                <svg class="pause-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7 5h4v14H7zM15 5h4v14h-4z" />
+                </svg>
+              </button>
+              <button
+                class="icon-button skip-button"
+                id="forward"
+                type="button"
+                aria-label="Go forward 10 seconds"
+                title="Forward 10 seconds"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M21 12a9 9 0 1 1-2.64-6.36L21 8.3" />
+                  <path d="M21 3v5.3h-5.3M12 8v8m-2-6 2-2 2 2" />
+                </svg>
+              </button>
+            </div>
+            <div class="volume-control">
+              <button
+                class="icon-button"
+                id="mute"
+                type="button"
+                aria-label="Mute"
+                title="Mute"
+                disabled
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M11 5 6 9H3v6h3l5 4z" />
+                  <path class="volume-wave" d="M15.5 8.5a5 5 0 0 1 0 7m3-10a9 9 0 0 1 0 13" />
+                  <path class="volume-muted" d="m16 9 5 6m0-6-5 6" />
+                </svg>
+              </button>
+              <label class="sr-only" for="volume">Volume</label>
+              <input
+                id="volume"
+                class="range volume-range"
+                type="range"
+                min="0"
+                max="1"
+                value="0.8"
+                step="0.01"
+                disabled
+              />
+            </div>
+          </div>
+          <p class="player-message" id="player-message" role="status">
+            Loading song and lyrics…
+          </p>
+        </section>
+
+        <section class="lyrics-section" aria-labelledby="lyrics-heading">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">FOLLOW ALONG</p>
+              <h2 id="lyrics-heading">The lyrics</h2>
+            </div>
+            <span class="lyrics-hint">Click a line to jump to it</span>
+          </div>
+          <ol class="lyrics-list" id="lyrics-list" aria-label="Song lyrics">
+            <li class="lyrics-placeholder">Loading synchronized lyrics…</li>
+          </ol>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <span>Made for the moments you know every word.</span>
+        <span class="footer-mark">K<span>JS</span></span>
+      </footer>
+    </div>
+  </body>
+</html>
