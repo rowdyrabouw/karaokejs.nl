@@ -25,7 +25,7 @@ const songs = {
     title: "Chasing Cars",
     artist: "Snow Patrol",
     genre: "Alternative",
-    vocals: "assets/audio/snow-patrol-chasing-cars.mp3",
+    vocals: "assets/audio/snow-patrol-chasing-cars-original.mp3",
     instrumental: "assets/audio/snow-patrol-chasing-cars-instrumental.mp3",
     lyrics: "assets/vtt/snow-patrol-chasing-cars.vtt",
   },
@@ -33,15 +33,15 @@ const songs = {
     title: "With or Without You",
     artist: "U2",
     genre: "Rock",
-    vocals: "assets/audio/u2-with-or-without-you-vocals-playback.mp3",
-    instrumental: "assets/audio/u2-with-or-without-you-instrumental-playback.mp3",
+    vocals: "assets/audio/u2-with-or-without-you-original.mp3",
+    instrumental: "assets/audio/u2-with-or-without-you-instrumental.mp3",
     lyrics: "assets/vtt/u2-with-or-without-you.vtt",
   },
   "no-matter-what": {
     title: "No Matter What",
     artist: "Boyzone",
     genre: "Pop",
-    vocals: "assets/audio/boyzone-no-matter-what-playback.mp3",
+    vocals: "assets/audio/boyzone-no-matter-what-original.mp3",
     instrumental: "assets/audio/boyzone-no-matter-instrumental.mp3",
     lyrics: "assets/vtt/boyzone-no-matter-what.vtt",
   },
@@ -83,7 +83,10 @@ function getTrackSource(track, songId = currentSongId) {
 }
 
 function isCurrentAudioSource() {
-  return audio.currentSrc === new URL(getTrackSource(currentTrack), document.baseURI).href;
+  return (
+    audio.currentSrc ===
+    new URL(getTrackSource(currentTrack), document.baseURI).href
+  );
 }
 
 function showMessage(message, isError = false) {
@@ -100,7 +103,11 @@ function parseTimestamp(timestamp) {
   const seconds = Number(parts.pop());
   const minutes = Number(parts.pop());
   const hours = parts.length ? Number(parts.pop()) : 0;
-  if (![hours, minutes, seconds].every(Number.isFinite) || seconds >= 60 || minutes >= 60) {
+  if (
+    ![hours, minutes, seconds].every(Number.isFinite) ||
+    seconds >= 60 ||
+    minutes >= 60
+  ) {
     throw new Error(`Invalid WebVTT timestamp: ${timestamp}`);
   }
   return hours * 3600 + minutes * 60 + seconds;
@@ -135,7 +142,10 @@ function parseVtt(source) {
 
     const start = parseTimestamp(timing[1]);
     const end = parseTimestamp(timing[2]);
-    const text = lines.slice(timingLineIndex + 1).join("\n").trim();
+    const text = lines
+      .slice(timingLineIndex + 1)
+      .join("\n")
+      .trim();
     if (end <= start || !text) {
       continue;
     }
@@ -182,19 +192,38 @@ function updateLyricHighlight(time) {
     return;
   }
 
-  const progress = Math.max(0, Math.min(1, (time - cue.start) / (cue.end - cue.start)));
+  const progress = Math.max(
+    0,
+    Math.min(1, (time - cue.start) / (cue.end - cue.start)),
+  );
   const nextHighlightedCount = Math.ceil(progress * stageLetters.length);
 
-  for (let index = highlightedLetterCount; index < nextHighlightedCount; index += 1) {
+  for (
+    let index = highlightedLetterCount;
+    index < nextHighlightedCount;
+    index += 1
+  ) {
     stageLetters[index].classList.add("is-sung");
   }
-  for (let index = nextHighlightedCount; index < highlightedLetterCount; index += 1) {
+  for (
+    let index = nextHighlightedCount;
+    index < highlightedLetterCount;
+    index += 1
+  ) {
     stageLetters[index].classList.remove("is-sung");
   }
   highlightedLetterCount = nextHighlightedCount;
 }
 
-function drawWaveform(ctx, data, centerX, centerY, width, amplitude, opacity = 1) {
+function drawWaveform(
+  ctx,
+  data,
+  centerX,
+  centerY,
+  width,
+  amplitude,
+  opacity = 1,
+) {
   const step = Math.max(1, Math.floor(data.length / width));
   ctx.globalAlpha = opacity;
   ctx.beginPath();
@@ -215,24 +244,36 @@ function drawHeart(ctx, centerX, centerY, size) {
   ctx.beginPath();
   ctx.moveTo(centerX, centerY + size * 0.34);
   ctx.bezierCurveTo(
-    centerX - size * 0.08, centerY + size * 0.26,
-    centerX - size * 0.5, centerY - size * 0.03,
-    centerX - size * 0.42, centerY - size * 0.29,
+    centerX - size * 0.08,
+    centerY + size * 0.26,
+    centerX - size * 0.5,
+    centerY - size * 0.03,
+    centerX - size * 0.42,
+    centerY - size * 0.29,
   );
   ctx.bezierCurveTo(
-    centerX - size * 0.35, centerY - size * 0.51,
-    centerX - size * 0.08, centerY - size * 0.47,
-    centerX, centerY - size * 0.27,
+    centerX - size * 0.35,
+    centerY - size * 0.51,
+    centerX - size * 0.08,
+    centerY - size * 0.47,
+    centerX,
+    centerY - size * 0.27,
   );
   ctx.bezierCurveTo(
-    centerX + size * 0.08, centerY - size * 0.47,
-    centerX + size * 0.35, centerY - size * 0.51,
-    centerX + size * 0.42, centerY - size * 0.29,
+    centerX + size * 0.08,
+    centerY - size * 0.47,
+    centerX + size * 0.35,
+    centerY - size * 0.51,
+    centerX + size * 0.42,
+    centerY - size * 0.29,
   );
   ctx.bezierCurveTo(
-    centerX + size * 0.5, centerY - size * 0.03,
-    centerX + size * 0.08, centerY + size * 0.26,
-    centerX, centerY + size * 0.34,
+    centerX + size * 0.5,
+    centerY - size * 0.03,
+    centerX + size * 0.08,
+    centerY + size * 0.26,
+    centerX,
+    centerY + size * 0.34,
   );
   ctx.closePath();
 }
@@ -287,7 +328,10 @@ function renderVisualizer() {
   if (activeVisualizerMode === "linear-spectrum" && frequency) {
     const barCount = Math.min(72, Math.floor(width / 7));
     const gap = 3;
-    const barWidth = Math.max(2, (width * 0.84 - gap * (barCount - 1)) / barCount);
+    const barWidth = Math.max(
+      2,
+      (width * 0.84 - gap * (barCount - 1)) / barCount,
+    );
     const startX = centerX - (barCount * (barWidth + gap) - gap) / 2;
     const middle = Math.floor(frequency.length * 0.56);
     const stride = Math.max(1, Math.floor(middle / barCount));
@@ -295,15 +339,52 @@ function renderVisualizer() {
     for (let index = 0; index < barCount; index += 1) {
       const value = frequency[index * stride] / 255;
       const barHeight = Math.max(2, value * height * 0.38);
-      ctx.fillRect(startX + index * (barWidth + gap), centerY - barHeight / 2, barWidth, barHeight);
+      ctx.fillRect(
+        startX + index * (barWidth + gap),
+        centerY - barHeight / 2,
+        barWidth,
+        barHeight,
+      );
     }
     ctx.globalAlpha = 1;
   } else if (activeVisualizerMode === "waveform-lines" && waveform) {
-    drawWaveform(ctx, waveform, centerX, centerY, width * 0.82, height * 0.18, 0.62);
-    drawWaveform(ctx, waveform, centerX, centerY - height * 0.11, width * 0.68, height * 0.1, 0.22);
-    drawWaveform(ctx, waveform, centerX, centerY + height * 0.11, width * 0.68, height * 0.1, 0.22);
+    drawWaveform(
+      ctx,
+      waveform,
+      centerX,
+      centerY,
+      width * 0.82,
+      height * 0.18,
+      0.62,
+    );
+    drawWaveform(
+      ctx,
+      waveform,
+      centerX,
+      centerY - height * 0.11,
+      width * 0.68,
+      height * 0.1,
+      0.22,
+    );
+    drawWaveform(
+      ctx,
+      waveform,
+      centerX,
+      centerY + height * 0.11,
+      width * 0.68,
+      height * 0.1,
+      0.22,
+    );
   } else if (activeVisualizerMode === "waveform" && waveform) {
-    drawWaveform(ctx, waveform, centerX, centerY, width * 0.84, height * 0.28, 0.8);
+    drawWaveform(
+      ctx,
+      waveform,
+      centerX,
+      centerY,
+      width * 0.84,
+      height * 0.28,
+      0.8,
+    );
   } else if (activeVisualizerMode === "radial-spectrum" && frequency) {
     const barCount = Math.min(96, frequency.length);
     const innerRadius = Math.min(width, height) * 0.11;
@@ -314,8 +395,14 @@ function renderVisualizer() {
       const value = frequency[index] / 255;
       const radius = innerRadius + value * maxLength;
       ctx.beginPath();
-      ctx.moveTo(centerX + Math.cos(angle) * innerRadius, centerY + Math.sin(angle) * innerRadius);
-      ctx.lineTo(centerX + Math.cos(angle) * radius, centerY + Math.sin(angle) * radius);
+      ctx.moveTo(
+        centerX + Math.cos(angle) * innerRadius,
+        centerY + Math.sin(angle) * innerRadius,
+      );
+      ctx.lineTo(
+        centerX + Math.cos(angle) * radius,
+        centerY + Math.sin(angle) * radius,
+      );
       ctx.stroke();
     }
     ctx.globalAlpha = 1;
@@ -330,8 +417,14 @@ function renderVisualizer() {
       const innerRadius = radius;
       const outerRadius = radius + Math.max(2, value * maxLength);
       ctx.beginPath();
-      ctx.moveTo(centerX + Math.cos(angle) * innerRadius, centerY + Math.sin(angle) * innerRadius);
-      ctx.lineTo(centerX + Math.cos(angle) * outerRadius, centerY + Math.sin(angle) * outerRadius);
+      ctx.moveTo(
+        centerX + Math.cos(angle) * innerRadius,
+        centerY + Math.sin(angle) * innerRadius,
+      );
+      ctx.lineTo(
+        centerX + Math.cos(angle) * outerRadius,
+        centerY + Math.sin(angle) * outerRadius,
+      );
       ctx.stroke();
     }
     ctx.globalAlpha = 1;
@@ -361,12 +454,21 @@ function renderVisualizer() {
   } else if (activeVisualizerMode === "mirrored-spectrum" && frequency) {
     const barCount = Math.min(64, Math.floor(width / 8));
     const gap = 3;
-    const barWidth = Math.max(2, (width * 0.82 - gap * (barCount - 1)) / barCount);
+    const barWidth = Math.max(
+      2,
+      (width * 0.82 - gap * (barCount - 1)) / barCount,
+    );
     const startX = centerX - (barCount * (barWidth + gap) - gap) / 2;
-    const stride = Math.max(1, Math.floor((frequency.length * 0.55) / barCount));
+    const stride = Math.max(
+      1,
+      Math.floor((frequency.length * 0.55) / barCount),
+    );
     ctx.globalAlpha = 0.64;
     for (let index = 0; index < barCount; index += 1) {
-      const barHeight = Math.max(2, (frequency[index * stride] / 255) * height * 0.34);
+      const barHeight = Math.max(
+        2,
+        (frequency[index * stride] / 255) * height * 0.34,
+      );
       const x = startX + index * (barWidth + gap);
       ctx.fillRect(x, centerY - barHeight, barWidth, barHeight);
       ctx.fillRect(x, centerY, barWidth, barHeight);
@@ -377,14 +479,20 @@ function renderVisualizer() {
     const left = centerX - width * 0.42;
     const right = centerX + width * 0.42;
     const pointCount = Math.max(2, Math.floor(right - left));
-    const gradient = ctx.createLinearGradient(0, centerY - height * 0.28, 0, centerY + height * 0.28);
+    const gradient = ctx.createLinearGradient(
+      0,
+      centerY - height * 0.28,
+      0,
+      centerY + height * 0.28,
+    );
     gradient.addColorStop(0, `${visualizerColor}00`);
     gradient.addColorStop(0.5, `${visualizerColor}bb`);
     gradient.addColorStop(1, `${visualizerColor}00`);
     ctx.beginPath();
     ctx.moveTo(left, centerY);
     for (let index = 0; index < pointCount; index += 1) {
-      const sample = waveform[Math.min(index * sampleStep, waveform.length - 1)] / 128 - 1;
+      const sample =
+        waveform[Math.min(index * sampleStep, waveform.length - 1)] / 128 - 1;
       ctx.lineTo(left + index, centerY + sample * height * 0.26);
     }
     ctx.lineTo(right, centerY);
@@ -401,7 +509,8 @@ function renderVisualizer() {
     ctx.beginPath();
     for (let index = 0; index < pointCount; index += 1) {
       const angle = (index / pointCount) * Math.PI * 2 - Math.PI / 2;
-      const sample = waveform[Math.floor((index / pointCount) * waveform.length)] / 128 - 1;
+      const sample =
+        waveform[Math.floor((index / pointCount) * waveform.length)] / 128 - 1;
       const radius = baseRadius + sample * amplitude;
       const x = centerX + Math.cos(angle) * radius;
       const y = centerY + Math.sin(angle) * radius;
@@ -436,7 +545,13 @@ function renderVisualizer() {
         const fade = 1 - distanceFromCenter / (rows / 2);
         ctx.globalAlpha = 0.18 + fade * 0.68;
         ctx.beginPath();
-        ctx.arc(startX + column * gapX, startY + row * gapY, radius, 0, Math.PI * 2);
+        ctx.arc(
+          startX + column * gapX,
+          startY + row * gapY,
+          radius,
+          0,
+          Math.PI * 2,
+        );
         ctx.fill();
       }
     }
@@ -459,7 +574,14 @@ function renderVisualizer() {
     const pulseScale = 1 + heartPulse * 0.18;
     const heartSize = Math.min(width, height) * 0.72 * pulseScale;
     const glowRadius = heartSize * 0.7;
-    const glow = ctx.createRadialGradient(centerX, centerY, heartSize * 0.12, centerX, centerY, glowRadius);
+    const glow = ctx.createRadialGradient(
+      centerX,
+      centerY,
+      heartSize * 0.12,
+      centerX,
+      centerY,
+      glowRadius,
+    );
     glow.addColorStop(0, `${visualizerColor}75`);
     glow.addColorStop(1, `${visualizerColor}00`);
     ctx.fillStyle = glow;
@@ -496,7 +618,10 @@ function shuffleVisualizerModes(previousMode) {
       randomVisualizerModes[index],
     ];
   }
-  if (randomVisualizerModes[0] === previousMode && randomVisualizerModes.length > 1) {
+  if (
+    randomVisualizerModes[0] === previousMode &&
+    randomVisualizerModes.length > 1
+  ) {
     [randomVisualizerModes[0], randomVisualizerModes[1]] = [
       randomVisualizerModes[1],
       randomVisualizerModes[0],
@@ -582,7 +707,8 @@ function updateActiveCue(time) {
   }
 
   renderStageCue(cues[current].text);
-  nextLyric.textContent = cues[current + 1]?.text ?? "Let the music take you there";
+  nextLyric.textContent =
+    cues[current + 1]?.text ?? "Let the music take you there";
   updateLyricHighlight(time);
 }
 
@@ -606,7 +732,8 @@ function stopLyricAnimation() {
 
 async function initializeAudioContext() {
   if (!audioContext) {
-    const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
+    const AudioContextConstructor =
+      window.AudioContext || window.webkitAudioContext;
     if (!AudioContextConstructor) {
       throw new Error("This browser does not support the Web Audio API.");
     }
@@ -679,7 +806,9 @@ function updateLoadState() {
     if (shouldResume) {
       playAudio();
     } else {
-      showMessage(`Ready — ${currentTrack === "vocals" ? "vocals" : "instrumental"} track selected.`);
+      showMessage(
+        `Ready — ${currentTrack === "vocals" ? "vocals" : "instrumental"} track selected.`,
+      );
     }
     return;
   }
@@ -713,7 +842,9 @@ function selectTrack(track) {
   audioReady = false;
   updateTrackButtons();
   updateLoadState();
-  showMessage(`Loading ${track === "vocals" ? "vocal" : "instrumental"} track…`);
+  showMessage(
+    `Loading ${track === "vocals" ? "vocal" : "instrumental"} track…`,
+  );
   audio.src = getTrackSource(track);
   audio.load();
 }
@@ -856,7 +987,9 @@ seekSlider.addEventListener("input", () => {
 });
 
 vocalTrackButton.addEventListener("click", () => selectTrack("vocals"));
-instrumentalTrackButton.addEventListener("click", () => selectTrack("instrumental"));
+instrumentalTrackButton.addEventListener("click", () =>
+  selectTrack("instrumental"),
+);
 songSelect.addEventListener("change", () => selectSong(songSelect.value));
 
 audio.addEventListener("loadedmetadata", handleLoadedMetadata);
