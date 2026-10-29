@@ -10,8 +10,8 @@
     />
     <title>KaraokeJS — Chasing Cars</title>
     <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=6" />
-    <script src="assets/js/app.js?v=6" defer></script>
+    <link rel="stylesheet" href="styles.css?v=8" />
+    <script src="assets/js/app.js?v=14" defer></script>
   </head>
   <body>
     <div class="app-shell">
@@ -26,6 +26,11 @@
       <main>
         <section class="player-layout" aria-label="Karaoke player">
           <div class="stage">
+            <canvas
+              class="stage-visualizer"
+              id="visualizer"
+              aria-hidden="true"
+            ></canvas>
             <div class="stage-topline">
               <span class="live-indicator"><span></span> NOW SINGING</span>
               <span class="track-number" id="song-number">01 / 02</span>
@@ -51,6 +56,7 @@
               <select id="song-select" class="song-select">
                 <option value="chasing-cars">Chasing Cars — Snow Patrol</option>
                 <option value="with-or-without-you">With or Without You — U2</option>
+                <option value="no-matter-what">No Matter What — Boyzone</option>
               </select>
               <h2 id="song-title">Chasing Cars</h2>
               <p id="song-artist">Snow Patrol</p>
@@ -73,6 +79,25 @@
               default
             />
           </audio>
+
+          <div class="visualizer-control">
+            <label for="visualizer-mode">VISUALIZER</label>
+            <select id="visualizer-mode" class="visualizer-select">
+              <option value="linear-spectrum">Linear spectrum</option>
+              <option value="waveform-lines">Waveform lines</option>
+              <option value="circular-spectrum">Circular spectrum</option>
+              <option value="radial-spectrum">Radial spectrum</option>
+              <option value="polygon-spectrum">Polygon spectrum</option>
+              <option value="waveform">Waveform</option>
+              <option value="mirrored-spectrum">Mirrored spectrum</option>
+              <option value="filled-waveform">Filled waveform</option>
+              <option value="circular-waveform">Circular waveform</option>
+              <option value="spectrum-dots">Spectrum dots</option>
+              <option value="echo-rings">Echo rings</option>
+              <option value="beating-heart">Beating heart</option>
+              <option value="random-cycle">Random cycle (every 8 seconds)</option>
+            </select>
+          </div>
 
           <div class="track-switch" role="group" aria-label="Audio track">
             <button
