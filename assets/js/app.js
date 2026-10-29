@@ -7,7 +7,6 @@ const currentTimeLabel = document.querySelector("#current-time");
 const durationLabel = document.querySelector("#duration");
 const currentLyric = document.querySelector("#current-lyric");
 const nextLyric = document.querySelector("#next-lyric");
-const lyricsList = document.querySelector("#lyrics-list");
 const playerMessage = document.querySelector("#player-message");
 const vocalTrackButton = document.querySelector("#track-vocals");
 const instrumentalTrackButton = document.querySelector("#track-instrumental");
@@ -153,30 +152,6 @@ function formatTime(seconds) {
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = Math.floor(seconds % 60);
   return `${minutes}:${String(remainingSeconds).padStart(2, "0")}`;
-}
-
-function renderLyrics() {
-  const fragment = document.createDocumentFragment();
-  cues.forEach((cue) => {
-    const item = document.createElement("li");
-    const button = document.createElement("button");
-    button.type = "button";
-    button.textContent = cue.text;
-    button.setAttribute("aria-label", `Jump to ${formatTime(cue.start)}: ${cue.text.replace(/\s+/g, " ")}`);
-    button.addEventListener("click", () => {
-      if (!Number.isFinite(audio.duration)) {
-        showMessage("Audio is not available, so you can't seek yet.", true);
-        return;
-      }
-      audio.currentTime = cue.start;
-      if (audio.paused) {
-        playAudio();
-      }
-    });
-    item.append(button);
-    fragment.append(item);
-  });
-  lyricsList.replaceChildren(fragment);
 }
 
 function renderStageCue(text) {
@@ -597,13 +572,6 @@ function updateActiveCue(time) {
   }
 
   activeCueIndex = current;
-  const lyricItems = lyricsList.children;
-  for (let index = 0; index < lyricItems.length; index += 1) {
-    const isActive = index === current;
-    lyricItems[index].classList.toggle("is-active", isActive);
-    lyricItems[index].setAttribute("aria-current", isActive ? "true" : "false");
-  }
-
   if (current < 0) {
     renderStageCue("");
     nextLyric.textContent =
@@ -768,7 +736,6 @@ async function loadLyrics(songId, requestId) {
 
     cues = parsedCues;
     lyricsReady = true;
-    renderLyrics();
     updateActiveCue(audio.currentTime);
     updateLoadState();
   } catch (error) {
@@ -777,11 +744,6 @@ async function loadLyrics(songId, requestId) {
     }
     lyricsReady = false;
     cues = [];
-    lyricsList.replaceChildren();
-    const placeholder = document.createElement("li");
-    placeholder.className = "lyrics-placeholder";
-    placeholder.textContent = error.message || "Couldn't load the lyrics.";
-    lyricsList.append(placeholder);
     updateLoadState();
     showMessage(error.message || "Couldn't load the lyrics.", true);
   }
@@ -804,11 +766,6 @@ function selectSong(songId) {
   hasStarted = false;
   renderStageCue("");
   nextLyric.textContent = "";
-  lyricsList.replaceChildren();
-  const placeholder = document.createElement("li");
-  placeholder.className = "lyrics-placeholder";
-  placeholder.textContent = "Loading synchronized lyrics…";
-  lyricsList.append(placeholder);
   currentTimeLabel.textContent = "0:00";
   durationLabel.textContent = "0:00";
   seekSlider.value = "0";

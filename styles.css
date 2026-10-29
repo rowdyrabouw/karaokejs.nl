@@ -618,90 +618,6 @@ main {
   color: #ff9a87;
 }
 
-.lyrics-section {
-  max-width: 760px;
-  margin: 58px auto 0;
-}
-
-.section-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-  margin-bottom: 18px;
-}
-
-.section-heading .eyebrow {
-  margin-bottom: 5px;
-  font-size: 9px;
-}
-
-.section-heading h2 {
-  margin: 0;
-  font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
-  font-size: 23px;
-  font-weight: 700;
-  letter-spacing: -0.04em;
-}
-
-.lyrics-hint {
-  padding-bottom: 3px;
-  color: #77736d;
-  font-size: 11px;
-}
-
-.lyrics-list {
-  display: grid;
-  gap: 5px;
-  max-height: 440px;
-  overflow-y: auto;
-  margin: 0;
-  padding: 0 8px 0 0;
-  list-style: none;
-  scrollbar-color: #49463e transparent;
-  scrollbar-width: thin;
-}
-
-.lyrics-list li {
-  border: 1px solid transparent;
-  border-radius: 7px;
-}
-
-.lyrics-list li button {
-  width: 100%;
-  padding: 12px 14px;
-  border: 0;
-  border-radius: inherit;
-  background: transparent;
-  color: #9d9991;
-  cursor: pointer;
-  font-size: 14px;
-  line-height: 1.55;
-  text-align: left;
-  white-space: pre-line;
-  transition: color 140ms ease, background 140ms ease;
-}
-
-.lyrics-list li button:hover {
-  background: rgba(255, 255, 255, 0.04);
-  color: #f5f2ec;
-}
-
-.lyrics-list li.is-active {
-  border-color: rgba(255, 208, 116, 0.14);
-  background: rgba(255, 208, 116, 0.055);
-}
-
-.lyrics-list li.is-active button {
-  color: var(--accent);
-  font-weight: 600;
-}
-
-.lyrics-placeholder {
-  padding: 16px 14px;
-  color: #77736d;
-  font-size: 13px;
-}
-
 .site-footer {
   display: flex;
   justify-content: space-between;
@@ -822,10 +738,6 @@ button:focus-visible {
   .volume-range {
     width: 67px;
   }
-
-  .lyrics-section {
-    margin-top: 42px;
-  }
 }
 
 @media (max-width: 390px) {
@@ -833,8 +745,7 @@ button:focus-visible {
     width: calc(100% - 24px);
   }
 
-  .header-note,
-  .lyrics-hint {
+  .header-note {
     font-size: 10px;
   }
 
