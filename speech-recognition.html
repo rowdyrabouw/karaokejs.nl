@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Streaming Local Whisper AI</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 1rem;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        margin-right: 10px;
+        cursor: pointer;
+      }
+      #output {
+        margin-top: 20px;
+        padding: 15px;
+        background: #f0f0f0;
+        border-radius: 8px;
+        min-height: 50px;
+      }
+      #status {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Local Streaming Dictation</h2>
+    <div id="status">
+      Loading AI Model (this requires internet on the very first run)...
+    </div>
+
+    <button id="recordBtn" disabled>Start Recording</button>
+    <button id="stopBtn" disabled>Stop Recording</button>
+
+    <div id="output">Transcription will appear here...</div>
+
+    <script type="module">
+      import {
+        pipeline,
+        env,
+      } from "https://cdn.jsdelivr.net/npm/@xenova/transformers@2.14.0";
+
+      // Disable local file paths since we are running in browser; rely on browser cache
+      env.allowLocalModels = false;
+
+      const statusText = document.getElementById("status");
+      const recordBtn = document.getElementById("recordBtn");
+      const stopBtn = document.getElementById("stopBtn");
+      const outputBox = document.getElementById("output");
+
+      let transcriber;
+      let audioContext;
+      let audioSource;
+      let audioProcessor;
+      let microphoneStream;
+      let recording = false;
+      let finishing = false;
+      let processing = false;
+      let queuedAudio = [];
+      let currentAudioFrames = [];
+      let currentAudioSamples = 0;
+      let segmentSamples = 0;
+      let overlapSamples = 0;
+
+      // 1. Initialize the Whisper Pipeline
+      async function loadModel() {
+        try {
+          // Downloads the model on first load, then caches it in the browser
+          transcriber = await pipeline(
+            "automatic-speech-recognition",
+            "Xenova/whisper-tiny.en",
+          );
+          statusText.textContent =
+            "Model loaded and cached. Ready for offline use.";
+          recordBtn.disabled = false;
+        } catch (err) {
+          statusText.textContent = "Error loading model: " + err.message;
+        }
+      }
+
+      function joinFrames(frames, sampleCount) {
+        const audio = new Float32Array(sampleCount);
+        let offset = 0;
+        for (const frame of frames) {
+          audio.set(frame, offset);
+          offset += frame.length;
+        }
+        return audio;
+      }
+
+      function queueSegment(audio) {
+        queuedAudio.push(audio);
+        void processQueue();
+      }
+
+      function captureAudio(input) {
+        let offset = 0;
+        while (offset < input.length) {
+          const samplesNeeded = segmentSamples - currentAudioSamples;
+          const samplesToCopy = Math.min(samplesNeeded, input.length - offset);
+          currentAudioFrames.push(input.slice(offset, offset + samplesToCopy));
+          currentAudioSamples += samplesToCopy;
+          offset += samplesToCopy;
+
+          if (currentAudioSamples === segmentSamples) {
+            const audio = joinFrames(currentAudioFrames, currentAudioSamples);
+            queueSegment(audio);
+            currentAudioFrames = overlapSamples
+              ? [audio.slice(audio.length - overlapSamples)]
+              : [];
+            currentAudioSamples = overlapSamples;
+          }
+        }
+      }
+
+      function mergeTranscript(previous, next) {
+        const previousWords = previous.trim().split(/\s+/).filter(Boolean);
+        const nextWords = next.trim().split(/\s+/).filter(Boolean);
+        const normalize = (word) =>
+          word.toLowerCase().replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "");
+
+        let overlap = 0;
+        for (
+          let length = Math.min(previousWords.length, nextWords.length);
+          length > 0;
+          length--
+        ) {
+          const previousTail = previousWords.slice(-length).map(normalize);
+          const nextHead = nextWords.slice(0, length).map(normalize);
+          if (previousTail.every((word, index) => word === nextHead[index])) {
+            overlap = length;
+            break;
+          }
+        }
+
+        return [...previousWords, ...nextWords.slice(overlap)].join(" ");
+      }
+
+      async function processQueue() {
+        if (processing) return;
+        processing = true;
+        try {
+          while (queuedAudio.length) {
+            const audio = queuedAudio.shift();
+            statusText.textContent = recording
+              ? "Recording... transcribing audio."
+              : "Transcribing final audio...";
+            const result = await transcriber(audio);
+            if (result.text.trim()) {
+              const previous = outputBox.textContent === "Transcription will appear here..."
+                ? ""
+                : outputBox.textContent;
+              outputBox.textContent = mergeTranscript(previous, result.text);
+            }
+          }
+        } catch (err) {
+          console.error("Error transcribing audio:", err);
+          statusText.textContent = "Error transcribing audio: " + err.message;
+        } finally {
+          processing = false;
+          if (!recording && !finishing) {
+            recordBtn.disabled = false;
+            stopBtn.disabled = true;
+            if (!statusText.textContent.startsWith("Error")) {
+              statusText.textContent = "Ready.";
+            }
+          }
+        }
+      }
+
+      async function startRecording() {
+        recordBtn.disabled = true;
+        statusText.textContent = "Requesting microphone access...";
+        try {
+          audioContext = new AudioContext({ sampleRate: 16000 });
+          await audioContext.resume();
+          microphoneStream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+          });
+          segmentSamples = audioContext.sampleRate * 5;
+          overlapSamples = audioContext.sampleRate * 0.5;
+          currentAudioFrames = [];
+          currentAudioSamples = 0;
+          queuedAudio = [];
+          outputBox.textContent = "";
+
+          audioSource = audioContext.createMediaStreamSource(microphoneStream);
+          audioProcessor = audioContext.createScriptProcessor(4096, 1, 1);
+          const silentOutput = audioContext.createGain();
+          silentOutput.gain.value = 0;
+
+          audioProcessor.onaudioprocess = (event) => {
+            captureAudio(event.inputBuffer.getChannelData(0));
+          };
+          audioSource.connect(audioProcessor);
+          audioProcessor.connect(silentOutput);
+          silentOutput.connect(audioContext.destination);
+
+          recording = true;
+          recordBtn.disabled = true;
+          stopBtn.disabled = false;
+          statusText.textContent = "Recording... speak now.";
+        } catch (err) {
+          microphoneStream?.getTracks().forEach((track) => track.stop());
+          if (audioContext && audioContext.state !== "closed") {
+            await audioContext.close();
+          }
+          recordBtn.disabled = false;
+          statusText.textContent = "Error starting recording: " + err.message;
+        }
+      }
+
+      async function stopRecording() {
+        recording = false;
+        finishing = true;
+        stopBtn.disabled = true;
+        statusText.textContent = "Finishing recording...";
+
+        audioProcessor?.disconnect();
+        audioSource?.disconnect();
+        microphoneStream?.getTracks().forEach((track) => track.stop());
+        if (audioContext && audioContext.state !== "closed") {
+          await audioContext.close();
+        }
+
+        finishing = false;
+        if (currentAudioSamples > overlapSamples) {
+          queueSegment(joinFrames(currentAudioFrames, currentAudioSamples));
+        }
+        currentAudioFrames = [];
+        currentAudioSamples = 0;
+        if (!processing && !queuedAudio.length) {
+          recordBtn.disabled = false;
+          statusText.textContent = "Ready.";
+        }
+      }
+
+      // Event Listeners
+      recordBtn.addEventListener("click", startRecording);
+      stopBtn.addEventListener("click", stopRecording);
+
+      // Start loading the model on page load
+      loadModel();
+    </script>
+  </body>
+</html>
