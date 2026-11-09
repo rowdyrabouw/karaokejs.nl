@@ -10,8 +10,8 @@
     />
     <title>KaraokeJS — Chasing Cars</title>
     <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=8" />
-    <script src="assets/js/app.js?v=14" defer></script>
+    <link rel="stylesheet" href="styles.css?v=9" />
+    <script src="assets/js/app.js?v=16" defer></script>
   </head>
   <body>
     <div class="app-shell">
@@ -55,7 +55,9 @@
               <label class="eyebrow" for="song-select">SELECT A SONG</label>
               <select id="song-select" class="song-select">
                 <option value="chasing-cars">Chasing Cars — Snow Patrol</option>
-                <option value="with-or-without-you">With or Without You — U2</option>
+                <option value="with-or-without-you">
+                  With or Without You — U2
+                </option>
                 <option value="no-matter-what">No Matter What — Boyzone</option>
               </select>
               <h2 id="song-title">Chasing Cars</h2>
@@ -70,7 +72,8 @@
         </section>
 
         <section class="controls-panel" aria-label="Audio controls">
-          <audio id="audio" preload="metadata">
+          <audio id="audio" preload="auto">
+            <!--
             <track
               id="captions"
               kind="captions"
@@ -78,6 +81,7 @@
               label="English"
               default
             />
+            -->
           </audio>
 
           <div class="visualizer-control">
@@ -95,7 +99,9 @@
               <option value="spectrum-dots">Spectrum dots</option>
               <option value="echo-rings">Echo rings</option>
               <option value="beating-heart">Beating heart</option>
-              <option value="random-cycle">Random cycle (every 8 seconds)</option>
+              <option value="random-cycle">
+                Random cycle (every 8 seconds)
+              </option>
             </select>
           </div>
 
@@ -117,6 +123,34 @@
               Instrumental
             </button>
           </div>
+
+          <div class="take-controls" role="group" aria-label="Sing and record">
+            <button class="take-button" id="record-take" type="button" disabled>
+              Record singing from start
+            </button>
+            <button class="take-button" id="stop-take" type="button" disabled>
+              Stop recording
+            </button>
+            <button class="take-button" id="play-take" type="button" disabled>
+              Play your take
+            </button>
+            <label class="sr-only" for="take-volume">Take volume</label>
+            <input
+              id="take-volume"
+              class="range take-volume"
+              type="range"
+              min="0"
+              max="1"
+              value="0.9"
+              step="0.01"
+              disabled
+            />
+          </div>
+          <p class="take-message" id="take-message" role="status">
+            Use headphones to keep the backing track out of the microphone.
+            Takes stay in this browser session.
+          </p>
+          <audio id="take-audio" preload="auto" hidden></audio>
 
           <div class="timeline">
             <span class="time" id="current-time">0:00</span>
@@ -188,7 +222,10 @@
               >
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M11 5 6 9H3v6h3l5 4z" />
-                  <path class="volume-wave" d="M15.5 8.5a5 5 0 0 1 0 7m3-10a9 9 0 0 1 0 13" />
+                  <path
+                    class="volume-wave"
+                    d="M15.5 8.5a5 5 0 0 1 0 7m3-10a9 9 0 0 1 0 13"
+                  />
                   <path class="volume-muted" d="m16 9 5 6m0-6-5 6" />
                 </svg>
               </button>

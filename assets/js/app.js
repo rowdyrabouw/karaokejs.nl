@@ -3,6 +3,14 @@ const playButton = document.querySelector("#play");
 const seekSlider = document.querySelector("#seek");
 const volumeSlider = document.querySelector("#volume");
 const muteButton = document.querySelector("#mute");
+const backButton = document.querySelector("#back");
+const forwardButton = document.querySelector("#forward");
+const recordTakeButton = document.querySelector("#record-take");
+const stopTakeButton = document.querySelector("#stop-take");
+const playTakeButton = document.querySelector("#play-take");
+const takeVolumeSlider = document.querySelector("#take-volume");
+const takeMessage = document.querySelector("#take-message");
+const takeAudio = document.querySelector("#take-audio");
 const currentTimeLabel = document.querySelector("#current-time");
 const durationLabel = document.querySelector("#duration");
 const currentLyric = document.querySelector("#current-lyric");
@@ -77,6 +85,20 @@ let pendingTrackChange = null;
 let songRequestId = 0;
 let audioReady = false;
 let lyricsReady = false;
+let mediaRecorder = null;
+let microphoneStream = null;
+let microphoneSource = null;
+let microphoneGain = null;
+let microphoneDestination = null;
+let takeChunks = [];
+let takeObjectUrl = "";
+let takeSongId = null;
+let takeStartTime = 0;
+let requestingRecording = false;
+let recording = false;
+let finishingRecording = false;
+let takePlaybackEnabled = false;
+let takeRecordingError = "";
 
 function getTrackSource(track, songId = currentSongId) {
   return songs[songId][track];
@@ -714,6 +736,7 @@ function updateActiveCue(time) {
 
 function animateLyrics() {
   updateActiveCue(audio.currentTime);
+  syncTakePlayback();
   renderVisualizer();
   if (!audio.paused && !audio.ended) {
     lyricAnimationFrame = requestAnimationFrame(animateLyrics);
@@ -792,7 +815,8 @@ function updateSongDetails() {
 function updateLoadState() {
   const isReady = audioReady && lyricsReady;
   playButton.disabled = !isReady;
-  seekSlider.disabled = !isReady;
+  seekSlider.disabled = !isReady || recording;
+  updateTakeControls();
   if (!isReady) {
     return;
   }
@@ -814,6 +838,264 @@ function updateLoadState() {
   }
 
   showMessage("Ready when you are — press play to start.");
+}
+
+function supportsRecording() {
+  return (
+    typeof window.MediaRecorder === "function" &&
+    typeof navigator.mediaDevices?.getUserMedia === "function"
+  );
+}
+
+function updateTakeControls() {
+  const isReady = audioReady && lyricsReady;
+  const hasTake = takeSongId === currentSongId && Boolean(takeObjectUrl);
+  const takeBusy = requestingRecording || recording || finishingRecording;
+  playButton.disabled = !isReady || requestingRecording;
+  recordTakeButton.disabled = !isReady || takeBusy || !supportsRecording();
+  stopTakeButton.disabled = !recording;
+  playTakeButton.disabled = !hasTake || takeBusy;
+  takeVolumeSlider.disabled = !hasTake;
+  seekSlider.disabled = !isReady || takeBusy;
+  songSelect.disabled = takeBusy;
+  vocalTrackButton.disabled = takeBusy;
+  instrumentalTrackButton.disabled = takeBusy;
+  backButton.disabled = takeBusy || !audioReady;
+  forwardButton.disabled = takeBusy || !audioReady;
+}
+
+function setMicrophoneCaptureEnabled(enabled) {
+  if (!microphoneGain || !audioContext) {
+    return;
+  }
+  microphoneGain.gain.setTargetAtTime(
+    enabled ? 1 : 0,
+    audioContext.currentTime,
+    0.01,
+  );
+}
+
+function stopSyncedTakePlayback() {
+  const wasPlayingTake = takePlaybackEnabled;
+  takePlaybackEnabled = false;
+  takeAudio.pause();
+  if (wasPlayingTake && !audio.paused) {
+    audio.pause();
+    showMessage("Your take finished playing.");
+  }
+}
+
+function syncTakePlayback() {
+  if (
+    !takePlaybackEnabled ||
+    takeSongId !== currentSongId ||
+    audio.paused ||
+    audio.ended
+  ) {
+    takeAudio.pause();
+    return;
+  }
+
+  const elapsed = audio.currentTime - takeStartTime;
+  if (
+    elapsed < 0 ||
+    (Number.isFinite(takeAudio.duration) && elapsed >= takeAudio.duration)
+  ) {
+    stopSyncedTakePlayback();
+    return;
+  }
+
+  if (
+    takeAudio.readyState >= HTMLMediaElement.HAVE_METADATA &&
+    Math.abs(takeAudio.currentTime - elapsed) > 0.2
+  ) {
+    takeAudio.currentTime = elapsed;
+  }
+  if (takeAudio.paused) {
+    takeAudio.play().catch((error) => {
+      takePlaybackEnabled = false;
+      takeMessage.textContent = `Couldn't play your take: ${error.message}`;
+      takeMessage.dataset.error = "true";
+    });
+  }
+}
+
+function finishTakeRecording() {
+  microphoneSource?.disconnect();
+  microphoneGain?.disconnect();
+  microphoneSource = null;
+  microphoneGain = null;
+  microphoneDestination?.stream.getTracks().forEach((track) => track.stop());
+  microphoneDestination = null;
+  microphoneStream?.getTracks().forEach((track) => track.stop());
+  microphoneStream = null;
+
+  const mimeType = mediaRecorder?.mimeType || "audio/webm";
+  const take = new Blob(takeChunks, { type: mimeType });
+  mediaRecorder = null;
+  takeChunks = [];
+  recording = false;
+  finishingRecording = false;
+  const recordingError = takeRecordingError;
+  takeRecordingError = "";
+
+  if (recordingError) {
+    takeMessage.textContent = recordingError;
+    takeMessage.dataset.error = "true";
+    updateTakeControls();
+    return;
+  }
+  if (take.size === 0) {
+    takeMessage.textContent =
+      "No audio was captured. Check microphone access and try again.";
+    takeMessage.dataset.error = "true";
+    updateTakeControls();
+    return;
+  }
+
+  if (takeObjectUrl) {
+    URL.revokeObjectURL(takeObjectUrl);
+  }
+  takeObjectUrl = URL.createObjectURL(take);
+  takeSongId = currentSongId;
+  takeAudio.src = takeObjectUrl;
+  takeAudio.volume = Number(takeVolumeSlider.value);
+  takeAudio.load();
+  takeMessage.textContent =
+    "Take ready. Play your take to hear it over the song.";
+  takeMessage.dataset.error = "false";
+  updateTakeControls();
+}
+
+function stopTakeRecording() {
+  if (!recording) {
+    return;
+  }
+
+  recording = false;
+  finishingRecording = true;
+  takeMessage.textContent = "Finishing your recording…";
+  takeMessage.dataset.error = "false";
+  updateTakeControls();
+  if (mediaRecorder && mediaRecorder.state !== "inactive") {
+    mediaRecorder.stop();
+  }
+}
+
+async function startTakeRecording() {
+  if (!supportsRecording()) {
+    takeMessage.textContent =
+      "Microphone recording isn't supported in this browser.";
+    takeMessage.dataset.error = "true";
+    return;
+  }
+
+  recordTakeButton.disabled = true;
+  requestingRecording = true;
+  updateTakeControls();
+  takeMessage.textContent = "Requesting microphone access…";
+  takeMessage.dataset.error = "false";
+  takePlaybackEnabled = false;
+  takeAudio.pause();
+  audio.pause();
+  try {
+    microphoneStream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: false,
+        noiseSuppression: false,
+        autoGainControl: false,
+      },
+    });
+    await initializeAudioContext();
+    microphoneSource = audioContext.createMediaStreamSource(microphoneStream);
+    microphoneGain = audioContext.createGain();
+    microphoneDestination = audioContext.createMediaStreamDestination();
+    microphoneGain.gain.value = 1;
+    microphoneSource.connect(microphoneGain);
+    microphoneGain.connect(microphoneDestination);
+    audio.currentTime = 0;
+    updateTimeline();
+    const mimeType = [
+      "audio/webm;codecs=opus",
+      "audio/ogg;codecs=opus",
+      "audio/mp4",
+    ].find((type) => MediaRecorder.isTypeSupported(type));
+    mediaRecorder = mimeType
+      ? new MediaRecorder(microphoneDestination.stream, { mimeType })
+      : new MediaRecorder(microphoneDestination.stream);
+    takeChunks = [];
+    mediaRecorder.addEventListener("dataavailable", (event) => {
+      if (event.data.size > 0) {
+        takeChunks.push(event.data);
+      }
+    });
+    mediaRecorder.addEventListener("stop", finishTakeRecording, { once: true });
+    mediaRecorder.addEventListener(
+      "error",
+      (event) => {
+        takeRecordingError = `Recording failed: ${event.error?.message || "unknown media error"}.`;
+        stopTakeRecording();
+      },
+      { once: true },
+    );
+
+    takeStartTime = audio.currentTime;
+    takeRecordingError = "";
+    mediaRecorder.start(500);
+    requestingRecording = false;
+    recording = true;
+    updateTakeControls();
+    takeMessage.textContent =
+      "Recording — your singing is being captured with the song.";
+    const playback = audio.play();
+    await playback;
+    showMessage("Recording your singing — sing along!");
+  } catch (error) {
+    requestingRecording = false;
+    if (mediaRecorder && mediaRecorder.state !== "inactive") {
+      takeRecordingError = `Couldn't start recording: ${error.message || "check microphone access and try again."}`;
+      stopTakeRecording();
+    } else {
+      microphoneStream?.getTracks().forEach((track) => track.stop());
+      microphoneStream = null;
+      microphoneSource?.disconnect();
+      microphoneGain?.disconnect();
+      microphoneDestination?.stream
+        .getTracks()
+        .forEach((track) => track.stop());
+      microphoneSource = null;
+      microphoneGain = null;
+      microphoneDestination = null;
+      mediaRecorder = null;
+      recording = false;
+      finishingRecording = false;
+      updateTakeControls();
+      takeMessage.textContent = `Couldn't start recording: ${error.message || "check microphone access and try again."}`;
+      takeMessage.dataset.error = "true";
+    }
+  }
+}
+
+async function playTake() {
+  if (takeSongId !== currentSongId || !takeObjectUrl) {
+    return;
+  }
+
+  takePlaybackEnabled = true;
+  audio.currentTime = takeStartTime;
+  takeAudio.currentTime = 0;
+  updateTimeline();
+  try {
+    await initializeAudioContext();
+    const audioPlayback = audio.play();
+    const takePlayback = takeAudio.play();
+    await Promise.all([audioPlayback, takePlayback]);
+    showMessage("Playing your take over the song.");
+  } catch (error) {
+    takePlaybackEnabled = false;
+    takeAudio.pause();
+    showMessage(error.message || "Couldn't play your take.", true);
+  }
 }
 
 function updateTimeline() {
@@ -885,6 +1167,8 @@ function selectSong(songId) {
     return;
   }
 
+  takePlaybackEnabled = false;
+  takeAudio.pause();
   const requestId = ++songRequestId;
   currentSongId = songId;
   currentTrack = "vocals";
@@ -979,6 +1263,18 @@ volumeSlider.addEventListener("input", () => {
   updateVolume();
 });
 
+recordTakeButton.addEventListener("click", startTakeRecording);
+stopTakeButton.addEventListener("click", stopTakeRecording);
+playTakeButton.addEventListener("click", playTake);
+takeVolumeSlider.addEventListener("input", () => {
+  takeAudio.volume = Number(takeVolumeSlider.value);
+  takeVolumeSlider.style.setProperty(
+    "--volume",
+    `${Number(takeVolumeSlider.value) * 100}%`,
+  );
+});
+takeAudio.addEventListener("ended", stopSyncedTakePlayback);
+
 seekSlider.addEventListener("input", () => {
   if (Number.isFinite(audio.duration)) {
     audio.currentTime = (Number(seekSlider.value) / 100) * audio.duration;
@@ -997,27 +1293,36 @@ audio.addEventListener("loadedmetadata", handleLoadedMetadata);
 audio.addEventListener("timeupdate", () => {
   updateTimeline();
   updateActiveCue(audio.currentTime);
+  syncTakePlayback();
 });
 
 audio.addEventListener("play", () => {
   hasStarted = true;
+  setMicrophoneCaptureEnabled(true);
   updatePlayButton();
   updateActiveCue(audio.currentTime);
+  syncTakePlayback();
   if (lyricAnimationFrame === null) {
     lyricAnimationFrame = requestAnimationFrame(animateLyrics);
   }
 });
 audio.addEventListener("pause", () => {
+  setMicrophoneCaptureEnabled(false);
+  takeAudio.pause();
   updatePlayButton();
   stopLyricAnimation();
   renderVisualizer();
 });
 audio.addEventListener("ended", () => {
+  takePlaybackEnabled = false;
+  takeAudio.pause();
+  stopTakeRecording();
   updatePlayButton();
   stopLyricAnimation();
   renderVisualizer();
   showMessage("Song finished — want to sing it again?");
 });
+audio.addEventListener("seeking", syncTakePlayback);
 
 audio.addEventListener("error", () => {
   if (!isCurrentAudioSource()) {
@@ -1025,6 +1330,7 @@ audio.addEventListener("error", () => {
   }
   audioReady = false;
   pendingTrackChange = null;
+  stopTakeRecording();
   updateLoadState();
   showMessage(
     `Audio couldn't be loaded. Check ${getTrackSource(currentTrack)}.`,
@@ -1062,10 +1368,21 @@ document.addEventListener("keydown", (event) => {
 audio.src = getTrackSource(currentTrack);
 audio.load();
 loadLyrics(currentSongId, songRequestId);
+takeAudio.volume = Number(takeVolumeSlider.value);
+takeVolumeSlider.style.setProperty(
+  "--volume",
+  `${Number(takeVolumeSlider.value) * 100}%`,
+);
+if (!supportsRecording()) {
+  takeMessage.textContent =
+    "Microphone recording isn't supported in this browser.";
+  takeMessage.dataset.error = "true";
+}
 
 updateVolume();
 visualizerColor = "#d985b7";
 resizeVisualizer();
+updateTakeControls();
 
 if (audio.readyState >= HTMLMediaElement.HAVE_METADATA) {
   handleLoadedMetadata();

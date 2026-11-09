@@ -414,6 +414,62 @@ main {
   color: #11171a;
 }
 
+.take-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 auto 8px;
+}
+
+.take-button {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #151412;
+  color: #d3cfc6;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  transition: color 140ms ease, border-color 140ms ease, background 140ms ease;
+}
+
+.take-button:hover:not(:disabled) {
+  border-color: rgba(255, 208, 116, 0.55);
+  color: #fff;
+}
+
+.take-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
+.take-volume {
+  width: 90px;
+  --volume: 90%;
+  background: linear-gradient(
+    to right,
+    var(--accent) 0%,
+    var(--accent) var(--volume),
+    rgba(255, 255, 255, 0.14) var(--volume),
+    rgba(255, 255, 255, 0.14) 100%
+  );
+}
+
+.take-message {
+  min-height: 16px;
+  margin: 0 0 13px;
+  color: #918d85;
+  font-size: 10px;
+  text-align: center;
+}
+
+.take-message[data-error="true"] {
+  color: #ff9a87;
+}
+
 .timeline {
   display: grid;
   grid-template-columns: 35px minmax(0, 1fr) 35px;
