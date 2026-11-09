@@ -1,0 +1,1276 @@
+{
+  "lines": [
+    {
+      "startTime": 7,
+      "endTime": 9.7,
+      "words": [
+        {
+          "text": "We'll",
+          "start": 7,
+          "end": 7.675
+        },
+        {
+          "text": "do",
+          "start": 7.675,
+          "end": 8.35
+        },
+        {
+          "text": "it",
+          "start": 8.35,
+          "end": 9.024999999999999
+        },
+        {
+          "text": "all",
+          "start": 9.024999999999999,
+          "end": 9.7
+        }
+      ]
+    },
+    {
+      "startTime": 11.6,
+      "endTime": 14.4,
+      "words": [
+        {
+          "text": "Everything",
+          "start": 11.6,
+          "end": 14.4
+        }
+      ]
+    },
+    {
+      "startTime": 15.8,
+      "endTime": 19.1,
+      "words": [
+        {
+          "text": "On",
+          "start": 15.8,
+          "end": 16.900000000000002
+        },
+        {
+          "text": "our",
+          "start": 16.900000000000002,
+          "end": 18
+        },
+        {
+          "text": "own",
+          "start": 18,
+          "end": 19.1
+        }
+      ]
+    },
+    {
+      "startTime": 25.7,
+      "endTime": 28.2,
+      "words": [
+        {
+          "text": "We",
+          "start": 25.7,
+          "end": 26.53333333333333
+        },
+        {
+          "text": "don't",
+          "start": 26.53333333333333,
+          "end": 27.366666666666667
+        },
+        {
+          "text": "need",
+          "start": 27.366666666666667,
+          "end": 28.2
+        }
+      ]
+    },
+    {
+      "startTime": 29.7,
+      "endTime": 32.5,
+      "words": [
+        {
+          "text": "Anything",
+          "start": 29.7,
+          "end": 32.5
+        }
+      ]
+    },
+    {
+      "startTime": 34.5,
+      "endTime": 37.9,
+      "words": [
+        {
+          "text": "Or",
+          "start": 34.5,
+          "end": 36.2
+        },
+        {
+          "text": "anyone",
+          "start": 36.2,
+          "end": 37.9
+        }
+      ]
+    },
+    {
+      "startTime": 40.7,
+      "endTime": 42.6,
+      "words": [
+        {
+          "text": "If",
+          "start": 40.7,
+          "end": 41.175000000000004
+        },
+        {
+          "text": "I",
+          "start": 41.175000000000004,
+          "end": 41.650000000000006
+        },
+        {
+          "text": "lay",
+          "start": 41.650000000000006,
+          "end": 42.125
+        },
+        {
+          "text": "here",
+          "start": 42.125,
+          "end": 42.6
+        }
+      ]
+    },
+    {
+      "startTime": 45,
+      "endTime": 48.5,
+      "words": [
+        {
+          "text": "If",
+          "start": 45,
+          "end": 45.7
+        },
+        {
+          "text": "I",
+          "start": 45.7,
+          "end": 46.4
+        },
+        {
+          "text": "just",
+          "start": 46.4,
+          "end": 47.1
+        },
+        {
+          "text": "lay",
+          "start": 47.1,
+          "end": 47.8
+        },
+        {
+          "text": "here",
+          "start": 47.8,
+          "end": 48.5
+        }
+      ]
+    },
+    {
+      "startTime": 49.5,
+      "endTime": 55.9,
+      "words": [
+        {
+          "text": "Would",
+          "start": 49.5,
+          "end": 50.14
+        },
+        {
+          "text": "you",
+          "start": 50.14,
+          "end": 50.78
+        },
+        {
+          "text": "lie",
+          "start": 50.78,
+          "end": 51.42
+        },
+        {
+          "text": "with",
+          "start": 51.42,
+          "end": 52.06
+        },
+        {
+          "text": "me",
+          "start": 52.06,
+          "end": 52.7
+        },
+        {
+          "text": "and",
+          "start": 52.7,
+          "end": 53.339999999999996
+        },
+        {
+          "text": "just",
+          "start": 53.339999999999996,
+          "end": 53.98
+        },
+        {
+          "text": "forget",
+          "start": 53.98,
+          "end": 54.62
+        },
+        {
+          "text": "the",
+          "start": 54.62,
+          "end": 55.26
+        },
+        {
+          "text": "world?",
+          "start": 55.26,
+          "end": 55.9
+        }
+      ]
+    },
+    {
+      "startTime": 62.1,
+      "endTime": 65.4,
+      "words": [
+        {
+          "text": "I",
+          "start": 62.1,
+          "end": 62.925000000000004
+        },
+        {
+          "text": "don't",
+          "start": 62.925000000000004,
+          "end": 63.75
+        },
+        {
+          "text": "quite",
+          "start": 63.75,
+          "end": 64.575
+        },
+        {
+          "text": "know",
+          "start": 64.575,
+          "end": 65.4
+        }
+      ]
+    },
+    {
+      "startTime": 67.1,
+      "endTime": 70,
+      "words": [
+        {
+          "text": "How",
+          "start": 67.1,
+          "end": 68.06666666666666
+        },
+        {
+          "text": "to",
+          "start": 68.06666666666666,
+          "end": 69.03333333333333
+        },
+        {
+          "text": "say",
+          "start": 69.03333333333333,
+          "end": 70
+        }
+      ]
+    },
+    {
+      "startTime": 71.7,
+      "endTime": 74.6,
+      "words": [
+        {
+          "text": "How",
+          "start": 71.7,
+          "end": 72.66666666666667
+        },
+        {
+          "text": "I",
+          "start": 72.66666666666667,
+          "end": 73.63333333333333
+        },
+        {
+          "text": "feel",
+          "start": 73.63333333333333,
+          "end": 74.6
+        }
+      ]
+    },
+    {
+      "startTime": 81,
+      "endTime": 83.7,
+      "words": [
+        {
+          "text": "Those",
+          "start": 81,
+          "end": 81.9
+        },
+        {
+          "text": "three",
+          "start": 81.9,
+          "end": 82.8
+        },
+        {
+          "text": "words",
+          "start": 82.8,
+          "end": 83.7
+        }
+      ]
+    },
+    {
+      "startTime": 85.3,
+      "endTime": 88.4,
+      "words": [
+        {
+          "text": "Are",
+          "start": 85.3,
+          "end": 86.075
+        },
+        {
+          "text": "said",
+          "start": 86.075,
+          "end": 86.85
+        },
+        {
+          "text": "too",
+          "start": 86.85,
+          "end": 87.625
+        },
+        {
+          "text": "much",
+          "start": 87.625,
+          "end": 88.4
+        }
+      ]
+    },
+    {
+      "startTime": 90,
+      "endTime": 93.2,
+      "words": [
+        {
+          "text": "They're",
+          "start": 90,
+          "end": 91.06666666666666
+        },
+        {
+          "text": "not",
+          "start": 91.06666666666666,
+          "end": 92.13333333333334
+        },
+        {
+          "text": "enough",
+          "start": 92.13333333333334,
+          "end": 93.2
+        }
+      ]
+    },
+    {
+      "startTime": 95.9,
+      "endTime": 98.3,
+      "words": [
+        {
+          "text": "If",
+          "start": 95.9,
+          "end": 96.5
+        },
+        {
+          "text": "I",
+          "start": 96.5,
+          "end": 97.1
+        },
+        {
+          "text": "lay",
+          "start": 97.1,
+          "end": 97.7
+        },
+        {
+          "text": "here",
+          "start": 97.7,
+          "end": 98.3
+        }
+      ]
+    },
+    {
+      "startTime": 99.9,
+      "endTime": 103.6,
+      "words": [
+        {
+          "text": "If",
+          "start": 99.9,
+          "end": 100.64
+        },
+        {
+          "text": "I",
+          "start": 100.64,
+          "end": 101.38
+        },
+        {
+          "text": "just",
+          "start": 101.38,
+          "end": 102.12
+        },
+        {
+          "text": "lay",
+          "start": 102.12,
+          "end": 102.86
+        },
+        {
+          "text": "here",
+          "start": 102.86,
+          "end": 103.6
+        }
+      ]
+    },
+    {
+      "startTime": 105.1,
+      "endTime": 111.2,
+      "words": [
+        {
+          "text": "Would",
+          "start": 105.1,
+          "end": 105.71
+        },
+        {
+          "text": "you",
+          "start": 105.71,
+          "end": 106.32
+        },
+        {
+          "text": "lie",
+          "start": 106.32,
+          "end": 106.92999999999999
+        },
+        {
+          "text": "with",
+          "start": 106.92999999999999,
+          "end": 107.53999999999999
+        },
+        {
+          "text": "me",
+          "start": 107.53999999999999,
+          "end": 108.15
+        },
+        {
+          "text": "and",
+          "start": 108.15,
+          "end": 108.76
+        },
+        {
+          "text": "just",
+          "start": 108.76,
+          "end": 109.37
+        },
+        {
+          "text": "forget",
+          "start": 109.37,
+          "end": 109.98
+        },
+        {
+          "text": "the",
+          "start": 109.98,
+          "end": 110.59
+        },
+        {
+          "text": "world?",
+          "start": 110.59,
+          "end": 111.2
+        }
+      ]
+    },
+    {
+      "startTime": 114.2,
+      "endTime": 117.1,
+      "words": [
+        {
+          "text": "Forget",
+          "start": 114.2,
+          "end": 114.925
+        },
+        {
+          "text": "what",
+          "start": 114.925,
+          "end": 115.65
+        },
+        {
+          "text": "we're",
+          "start": 115.65,
+          "end": 116.375
+        },
+        {
+          "text": "told",
+          "start": 116.375,
+          "end": 117.1
+        }
+      ]
+    },
+    {
+      "startTime": 118.7,
+      "endTime": 122.1,
+      "words": [
+        {
+          "text": "Before",
+          "start": 118.7,
+          "end": 119.38
+        },
+        {
+          "text": "we",
+          "start": 119.38,
+          "end": 120.06
+        },
+        {
+          "text": "get",
+          "start": 120.06,
+          "end": 120.74
+        },
+        {
+          "text": "too",
+          "start": 120.74,
+          "end": 121.42
+        },
+        {
+          "text": "old",
+          "start": 121.42,
+          "end": 122.1
+        }
+      ]
+    },
+    {
+      "startTime": 123.6,
+      "endTime": 129.4,
+      "words": [
+        {
+          "text": "Show",
+          "start": 123.6,
+          "end": 124.32499999999999
+        },
+        {
+          "text": "me",
+          "start": 124.32499999999999,
+          "end": 125.05
+        },
+        {
+          "text": "a",
+          "start": 125.05,
+          "end": 125.775
+        },
+        {
+          "text": "garden",
+          "start": 125.775,
+          "end": 126.5
+        },
+        {
+          "text": "that's",
+          "start": 126.5,
+          "end": 127.225
+        },
+        {
+          "text": "bursting",
+          "start": 127.225,
+          "end": 127.95
+        },
+        {
+          "text": "into",
+          "start": 127.95,
+          "end": 128.675
+        },
+        {
+          "text": "life",
+          "start": 128.675,
+          "end": 129.4
+        }
+      ]
+    },
+    {
+      "startTime": 136.1,
+      "endTime": 139,
+      "words": [
+        {
+          "text": "Let's",
+          "start": 136.1,
+          "end": 137.06666666666666
+        },
+        {
+          "text": "waste",
+          "start": 137.06666666666666,
+          "end": 138.03333333333333
+        },
+        {
+          "text": "time",
+          "start": 138.03333333333333,
+          "end": 139
+        }
+      ]
+    },
+    {
+      "startTime": 140.8,
+      "endTime": 143.7,
+      "words": [
+        {
+          "text": "Chasing",
+          "start": 140.8,
+          "end": 142.25
+        },
+        {
+          "text": "cars",
+          "start": 142.25,
+          "end": 143.7
+        }
+      ]
+    },
+    {
+      "startTime": 145.3,
+      "endTime": 148.4,
+      "words": [
+        {
+          "text": "Around",
+          "start": 145.3,
+          "end": 146.33333333333334
+        },
+        {
+          "text": "our",
+          "start": 146.33333333333334,
+          "end": 147.36666666666667
+        },
+        {
+          "text": "heads",
+          "start": 147.36666666666667,
+          "end": 148.4
+        }
+      ]
+    },
+    {
+      "startTime": 154.4,
+      "endTime": 157.6,
+      "words": [
+        {
+          "text": "I",
+          "start": 154.4,
+          "end": 155.2
+        },
+        {
+          "text": "need",
+          "start": 155.2,
+          "end": 156
+        },
+        {
+          "text": "your",
+          "start": 156,
+          "end": 156.8
+        },
+        {
+          "text": "grace",
+          "start": 156.8,
+          "end": 157.6
+        }
+      ]
+    },
+    {
+      "startTime": 159.2,
+      "endTime": 162.3,
+      "words": [
+        {
+          "text": "To",
+          "start": 159.2,
+          "end": 160.23333333333332
+        },
+        {
+          "text": "remind",
+          "start": 160.23333333333332,
+          "end": 161.26666666666668
+        },
+        {
+          "text": "me",
+          "start": 161.26666666666668,
+          "end": 162.3
+        }
+      ]
+    },
+    {
+      "startTime": 163.7,
+      "endTime": 166.9,
+      "words": [
+        {
+          "text": "To",
+          "start": 163.7,
+          "end": 164.5
+        },
+        {
+          "text": "find",
+          "start": 164.5,
+          "end": 165.3
+        },
+        {
+          "text": "my",
+          "start": 165.3,
+          "end": 166.1
+        },
+        {
+          "text": "own",
+          "start": 166.1,
+          "end": 166.9
+        }
+      ]
+    },
+    {
+      "startTime": 169.8,
+      "endTime": 172,
+      "words": [
+        {
+          "text": "If",
+          "start": 169.8,
+          "end": 170.35000000000002
+        },
+        {
+          "text": "I",
+          "start": 170.35000000000002,
+          "end": 170.9
+        },
+        {
+          "text": "lay",
+          "start": 170.9,
+          "end": 171.45
+        },
+        {
+          "text": "here",
+          "start": 171.45,
+          "end": 172
+        }
+      ]
+    },
+    {
+      "startTime": 174,
+      "endTime": 177.3,
+      "words": [
+        {
+          "text": "If",
+          "start": 174,
+          "end": 174.66
+        },
+        {
+          "text": "I",
+          "start": 174.66,
+          "end": 175.32
+        },
+        {
+          "text": "just",
+          "start": 175.32,
+          "end": 175.98000000000002
+        },
+        {
+          "text": "lay",
+          "start": 175.98000000000002,
+          "end": 176.64000000000001
+        },
+        {
+          "text": "here",
+          "start": 176.64000000000001,
+          "end": 177.3
+        }
+      ]
+    },
+    {
+      "startTime": 178.8,
+      "endTime": 185,
+      "words": [
+        {
+          "text": "Would",
+          "start": 178.8,
+          "end": 179.42000000000002
+        },
+        {
+          "text": "you",
+          "start": 179.42000000000002,
+          "end": 180.04000000000002
+        },
+        {
+          "text": "lie",
+          "start": 180.04000000000002,
+          "end": 180.66
+        },
+        {
+          "text": "with",
+          "start": 180.66,
+          "end": 181.28
+        },
+        {
+          "text": "me",
+          "start": 181.28,
+          "end": 181.9
+        },
+        {
+          "text": "and",
+          "start": 181.9,
+          "end": 182.52
+        },
+        {
+          "text": "just",
+          "start": 182.52,
+          "end": 183.14000000000001
+        },
+        {
+          "text": "forget",
+          "start": 183.14000000000001,
+          "end": 183.76
+        },
+        {
+          "text": "the",
+          "start": 183.76,
+          "end": 184.38
+        },
+        {
+          "text": "world?",
+          "start": 184.38,
+          "end": 185
+        }
+      ]
+    },
+    {
+      "startTime": 188,
+      "endTime": 190.6,
+      "words": [
+        {
+          "text": "Forget",
+          "start": 188,
+          "end": 188.65
+        },
+        {
+          "text": "what",
+          "start": 188.65,
+          "end": 189.3
+        },
+        {
+          "text": "we're",
+          "start": 189.3,
+          "end": 189.95
+        },
+        {
+          "text": "told",
+          "start": 189.95,
+          "end": 190.6
+        }
+      ]
+    },
+    {
+      "startTime": 192.7,
+      "endTime": 195.8,
+      "words": [
+        {
+          "text": "Before",
+          "start": 192.7,
+          "end": 193.32
+        },
+        {
+          "text": "we",
+          "start": 193.32,
+          "end": 193.94
+        },
+        {
+          "text": "get",
+          "start": 193.94,
+          "end": 194.56
+        },
+        {
+          "text": "too",
+          "start": 194.56,
+          "end": 195.18
+        },
+        {
+          "text": "old",
+          "start": 195.18,
+          "end": 195.8
+        }
+      ]
+    },
+    {
+      "startTime": 197.2,
+      "endTime": 203.4,
+      "words": [
+        {
+          "text": "Show",
+          "start": 197.2,
+          "end": 197.975
+        },
+        {
+          "text": "me",
+          "start": 197.975,
+          "end": 198.75
+        },
+        {
+          "text": "a",
+          "start": 198.75,
+          "end": 199.525
+        },
+        {
+          "text": "garden",
+          "start": 199.525,
+          "end": 200.3
+        },
+        {
+          "text": "that's",
+          "start": 200.3,
+          "end": 201.075
+        },
+        {
+          "text": "bursting",
+          "start": 201.075,
+          "end": 201.85
+        },
+        {
+          "text": "into",
+          "start": 201.85,
+          "end": 202.625
+        },
+        {
+          "text": "life",
+          "start": 202.625,
+          "end": 203.4
+        }
+      ]
+    },
+    {
+      "startTime": 206.7,
+      "endTime": 208.9,
+      "words": [
+        {
+          "text": "All",
+          "start": 206.7,
+          "end": 207.25
+        },
+        {
+          "text": "that",
+          "start": 207.25,
+          "end": 207.8
+        },
+        {
+          "text": "I",
+          "start": 207.8,
+          "end": 208.35
+        },
+        {
+          "text": "am",
+          "start": 208.35,
+          "end": 208.9
+        }
+      ]
+    },
+    {
+      "startTime": 211.1,
+      "endTime": 214.4,
+      "words": [
+        {
+          "text": "All",
+          "start": 211.1,
+          "end": 211.76
+        },
+        {
+          "text": "that",
+          "start": 211.76,
+          "end": 212.42
+        },
+        {
+          "text": "I",
+          "start": 212.42,
+          "end": 213.08
+        },
+        {
+          "text": "ever",
+          "start": 213.08,
+          "end": 213.74
+        },
+        {
+          "text": "was",
+          "start": 213.74,
+          "end": 214.4
+        }
+      ]
+    },
+    {
+      "startTime": 215.8,
+      "endTime": 221.8,
+      "words": [
+        {
+          "text": "Is",
+          "start": 215.8,
+          "end": 216.34545454545454
+        },
+        {
+          "text": "here",
+          "start": 216.34545454545454,
+          "end": 216.8909090909091
+        },
+        {
+          "text": "in",
+          "start": 216.8909090909091,
+          "end": 217.43636363636364
+        },
+        {
+          "text": "your",
+          "start": 217.43636363636364,
+          "end": 217.9818181818182
+        },
+        {
+          "text": "perfect",
+          "start": 217.9818181818182,
+          "end": 218.52727272727273
+        },
+        {
+          "text": "eyes,",
+          "start": 218.52727272727273,
+          "end": 219.0727272727273
+        },
+        {
+          "text": "they're",
+          "start": 219.0727272727273,
+          "end": 219.61818181818182
+        },
+        {
+          "text": "all",
+          "start": 219.61818181818182,
+          "end": 220.16363636363639
+        },
+        {
+          "text": "I",
+          "start": 220.16363636363639,
+          "end": 220.70909090909092
+        },
+        {
+          "text": "can",
+          "start": 220.70909090909092,
+          "end": 221.25454545454548
+        },
+        {
+          "text": "see",
+          "start": 221.25454545454548,
+          "end": 221.8
+        }
+      ]
+    },
+    {
+      "startTime": 225.2,
+      "endTime": 227.3,
+      "words": [
+        {
+          "text": "I",
+          "start": 225.2,
+          "end": 225.725
+        },
+        {
+          "text": "don't",
+          "start": 225.725,
+          "end": 226.25
+        },
+        {
+          "text": "know",
+          "start": 226.25,
+          "end": 226.775
+        },
+        {
+          "text": "where",
+          "start": 226.775,
+          "end": 227.3
+        }
+      ]
+    },
+    {
+      "startTime": 229.4,
+      "endTime": 232.9,
+      "words": [
+        {
+          "text": "Confused",
+          "start": 229.4,
+          "end": 230.1
+        },
+        {
+          "text": "about",
+          "start": 230.1,
+          "end": 230.8
+        },
+        {
+          "text": "how",
+          "start": 230.8,
+          "end": 231.5
+        },
+        {
+          "text": "as",
+          "start": 231.5,
+          "end": 232.20000000000002
+        },
+        {
+          "text": "well",
+          "start": 232.20000000000002,
+          "end": 232.9
+        }
+      ]
+    },
+    {
+      "startTime": 234.3,
+      "endTime": 240.2,
+      "words": [
+        {
+          "text": "Just",
+          "start": 234.3,
+          "end": 234.79166666666669
+        },
+        {
+          "text": "know",
+          "start": 234.79166666666669,
+          "end": 235.28333333333333
+        },
+        {
+          "text": "that",
+          "start": 235.28333333333333,
+          "end": 235.775
+        },
+        {
+          "text": "these",
+          "start": 235.775,
+          "end": 236.26666666666668
+        },
+        {
+          "text": "things",
+          "start": 236.26666666666668,
+          "end": 236.75833333333333
+        },
+        {
+          "text": "will",
+          "start": 236.75833333333333,
+          "end": 237.25
+        },
+        {
+          "text": "never",
+          "start": 237.25,
+          "end": 237.74166666666667
+        },
+        {
+          "text": "change",
+          "start": 237.74166666666667,
+          "end": 238.23333333333332
+        },
+        {
+          "text": "for",
+          "start": 238.23333333333332,
+          "end": 238.725
+        },
+        {
+          "text": "us",
+          "start": 238.725,
+          "end": 239.21666666666667
+        },
+        {
+          "text": "at",
+          "start": 239.21666666666667,
+          "end": 239.70833333333331
+        },
+        {
+          "text": "all",
+          "start": 239.70833333333331,
+          "end": 240.2
+        }
+      ]
+    },
+    {
+      "startTime": 243.9,
+      "endTime": 245.8,
+      "words": [
+        {
+          "text": "If",
+          "start": 243.9,
+          "end": 244.375
+        },
+        {
+          "text": "I",
+          "start": 244.375,
+          "end": 244.85000000000002
+        },
+        {
+          "text": "lay",
+          "start": 244.85000000000002,
+          "end": 245.32500000000002
+        },
+        {
+          "text": "here",
+          "start": 245.32500000000002,
+          "end": 245.8
+        }
+      ]
+    },
+    {
+      "startTime": 247.9,
+      "endTime": 251.1,
+      "words": [
+        {
+          "text": "If",
+          "start": 247.9,
+          "end": 248.54
+        },
+        {
+          "text": "I",
+          "start": 248.54,
+          "end": 249.18
+        },
+        {
+          "text": "just",
+          "start": 249.18,
+          "end": 249.82
+        },
+        {
+          "text": "lay",
+          "start": 249.82,
+          "end": 250.46
+        },
+        {
+          "text": "here",
+          "start": 250.46,
+          "end": 251.1
+        }
+      ]
+    },
+    {
+      "startTime": 252.8,
+      "endTime": 258.9,
+      "words": [
+        {
+          "text": "Would",
+          "start": 252.8,
+          "end": 253.41
+        },
+        {
+          "text": "you",
+          "start": 253.41,
+          "end": 254.02
+        },
+        {
+          "text": "lie",
+          "start": 254.02,
+          "end": 254.63
+        },
+        {
+          "text": "with",
+          "start": 254.63,
+          "end": 255.24
+        },
+        {
+          "text": "me",
+          "start": 255.24,
+          "end": 255.85
+        },
+        {
+          "text": "and",
+          "start": 255.85,
+          "end": 256.46
+        },
+        {
+          "text": "just",
+          "start": 256.46,
+          "end": 257.07
+        },
+        {
+          "text": "forget",
+          "start": 257.07,
+          "end": 257.68
+        },
+        {
+          "text": "the",
+          "start": 257.68,
+          "end": 258.28999999999996
+        },
+        {
+          "text": "world?",
+          "start": 258.28999999999996,
+          "end": 258.9
+        }
+      ]
+    }
+  ]
+}
