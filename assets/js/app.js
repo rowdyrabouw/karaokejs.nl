@@ -35,7 +35,8 @@ const songs = {
     genre: "Alternative",
     vocals: "assets/audio/snow-patrol-chasing-cars-original.mp3",
     instrumental: "assets/audio/snow-patrol-chasing-cars-instrumental.mp3",
-    lyrics: "assets/vtt/snow-patrol-chasing-cars.vtt",
+    lyrics: "assets/vtt/snow-patrol-chasing-cars.json",
+    lyricsFormat: "json",
   },
   "with-or-without-you": {
     title: "With or Without You",
@@ -63,6 +64,7 @@ let cues = [];
 let activeCueIndex = -1;
 let hasStarted = false;
 let stageLetters = [];
+let stageWords = [];
 let highlightedLetterCount = 0;
 let lyricAnimationFrame = null;
 let audioContext;
@@ -177,6 +179,47 @@ function parseVtt(source) {
   return parsedCues.sort((a, b) => a.start - b.start);
 }
 
+function parseWordLyrics(source) {
+  const data = JSON.parse(source);
+  if (!Array.isArray(data.lines)) {
+    throw new Error("The lyrics file does not contain a valid lines array.");
+  }
+
+  const parsedCues = data.lines.map((line) => {
+    if (
+      !Number.isFinite(line.startTime) ||
+      !Number.isFinite(line.endTime) ||
+      line.endTime <= line.startTime ||
+      !Array.isArray(line.words) ||
+      line.words.length === 0
+    ) {
+      throw new Error("The lyrics file contains an invalid lyric line.");
+    }
+
+    const words = line.words.map((word) => {
+      if (
+        typeof word.text !== "string" ||
+        !word.text.trim() ||
+        !Number.isFinite(word.start) ||
+        !Number.isFinite(word.end) ||
+        word.end <= word.start
+      ) {
+        throw new Error("The lyrics file contains an invalid lyric word.");
+      }
+      return { text: word.text, start: word.start, end: word.end };
+    });
+
+    return {
+      start: line.startTime,
+      end: line.endTime,
+      text: words.map((word) => word.text).join(" "),
+      words,
+    };
+  });
+
+  return parsedCues.sort((a, b) => a.start - b.start);
+}
+
 function formatTime(seconds) {
   if (!Number.isFinite(seconds) || seconds < 0) {
     return "0:00";
@@ -186,22 +229,36 @@ function formatTime(seconds) {
   return `${minutes}:${String(remainingSeconds).padStart(2, "0")}`;
 }
 
-function renderStageCue(text) {
+function renderStageCue(cue) {
   const fragment = document.createDocumentFragment();
   stageLetters = [];
+  stageWords = [];
   highlightedLetterCount = 0;
 
-  for (const character of text) {
-    if (character === "\n") {
-      fragment.append(document.createElement("br"));
-    } else if (/\s/.test(character)) {
-      fragment.append(document.createTextNode(character));
-    } else {
-      const letter = document.createElement("span");
-      letter.className = "lyric-letter";
-      letter.textContent = character;
-      stageLetters.push(letter);
-      fragment.append(letter);
+  if (cue?.words) {
+    cue.words.forEach((word, index) => {
+      if (index > 0) {
+        fragment.append(document.createTextNode(" "));
+      }
+      const wordElement = document.createElement("span");
+      wordElement.className = "lyric-word";
+      wordElement.textContent = word.text;
+      stageWords.push(wordElement);
+      fragment.append(wordElement);
+    });
+  } else {
+    for (const character of cue?.text ?? "") {
+      if (character === "\n") {
+        fragment.append(document.createElement("br"));
+      } else if (/\s/.test(character)) {
+        fragment.append(document.createTextNode(character));
+      } else {
+        const letter = document.createElement("span");
+        letter.className = "lyric-letter";
+        letter.textContent = character;
+        stageLetters.push(letter);
+        fragment.append(letter);
+      }
     }
   }
 
@@ -210,7 +267,22 @@ function renderStageCue(text) {
 
 function updateLyricHighlight(time) {
   const cue = cues[activeCueIndex];
-  if (!cue || stageLetters.length === 0) {
+  if (!cue) {
+    return;
+  }
+
+  if (cue.words) {
+    cue.words.forEach((word, index) => {
+      stageWords[index].classList.toggle("is-sung", time >= word.end);
+      stageWords[index].classList.toggle(
+        "is-current",
+        time >= word.start && time < word.end,
+      );
+    });
+    return;
+  }
+
+  if (stageLetters.length === 0) {
     return;
   }
 
@@ -720,7 +792,7 @@ function updateActiveCue(time) {
 
   activeCueIndex = current;
   if (current < 0) {
-    renderStageCue("");
+    renderStageCue(null);
     nextLyric.textContent =
       candidate >= 0 && candidate + 1 < cues.length
         ? cues[candidate + 1].text
@@ -728,7 +800,7 @@ function updateActiveCue(time) {
     return;
   }
 
-  renderStageCue(cues[current].text);
+  renderStageCue(cues[current]);
   nextLyric.textContent =
     cues[current + 1]?.text ?? "Let the music take you there";
   updateLyricHighlight(time);
@@ -1138,10 +1210,13 @@ async function loadLyrics(songId, requestId) {
     if (!response.ok) {
       throw new Error(`Couldn't load lyrics (${response.status}).`);
     }
-    const vtt = await response.text();
-    const parsedCues = parseVtt(vtt);
+    const lyrics = await response.text();
+    const parsedCues =
+      song.lyricsFormat === "json"
+        ? parseWordLyrics(lyrics)
+        : parseVtt(lyrics);
     if (parsedCues.length === 0) {
-      throw new Error("The captions file contains no usable lyric cues.");
+      throw new Error("The lyrics file contains no usable lyric cues.");
     }
     if (requestId !== songRequestId) {
       return;
@@ -1179,7 +1254,7 @@ function selectSong(songId) {
   cues = [];
   activeCueIndex = -1;
   hasStarted = false;
-  renderStageCue("");
+  renderStageCue(null);
   nextLyric.textContent = "";
   currentTimeLabel.textContent = "0:00";
   durationLabel.textContent = "0:00";

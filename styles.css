@@ -203,6 +203,7 @@ main {
   font-weight: 800;
   line-height: 1.18;
   letter-spacing: -0.045em;
+  text-transform: uppercase;
   text-wrap: balance;
   transition: opacity 180ms ease;
 }
@@ -213,7 +214,23 @@ main {
 }
 
 .lyric-letter.is-sung {
+  color: #fff;
+}
+
+.lyric-word {
+  color: rgba(245, 242, 236, 0.48);
+  transition:
+    color 100ms linear,
+    text-shadow 100ms linear;
+}
+
+.lyric-word.is-sung {
+  color: #fff;
+}
+
+.lyric-word.is-current {
   color: var(--accent);
+  text-shadow: 0 0 18px rgba(255, 208, 116, 0.35);
 }
 
 .stage-next {
@@ -223,6 +240,7 @@ main {
   color: rgba(245, 242, 236, 0.42);
   font-size: clamp(14px, 2vw, 18px);
   line-height: 1.5;
+  text-transform: uppercase;
   white-space: pre-line;
 }
 
