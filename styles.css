@@ -230,6 +230,9 @@ main {
 
 .lyric-word.is-current {
   color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 0.12em;
+  text-underline-offset: 0.12em;
   text-shadow: 0 0 18px rgba(255, 208, 116, 0.35);
 }
 

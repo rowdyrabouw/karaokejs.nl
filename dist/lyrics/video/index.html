@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Breathless — Karaoke</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+  </head>
+  <body>
+    <main>
+      <div class="cover-wrap">
+        <img class="cover-art" src="../assets/img/u2.jpg" alt="U2" />
+        <div class="cover-caption">U2 - Vertigo</div>
+      </div>
+
+      <style>
+        video::-webkit-media-text-track-display {
+          top: 50% !important;
+          font-size: 2rem !important;
+          transform: translateY(-50%) !important;
+          font-family: "Noto Sans JP", "Segoe UI", Arial, sans-serif;
+          text-shadow: 2px 2px 4px #000;
+        }
+      </style>
+      <div class="info-panel">
+        <div class="status-box">
+          <video id="video-player" controls width="100%" height="auto">
+            <source src="assets/mp4/u2-vertigo.mp4" type="video/mp4" />
+            <track
+              label="English"
+              kind="subtitles"
+              srclang="en"
+              src="assets/vtt/u2-vertigo.vtt"
+              default
+            />
+          </video>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

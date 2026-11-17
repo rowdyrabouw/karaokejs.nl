@@ -185,11 +185,20 @@ function parseWordLyrics(source) {
     throw new Error("The lyrics file does not contain a valid lines array.");
   }
 
+  const parseLyricsTime = (time) =>
+    typeof time === "number"
+      ? time
+      : typeof time === "string"
+        ? parseTimestamp(time)
+        : Number.NaN;
+
   const parsedCues = data.lines.map((line) => {
+    const startTime = parseLyricsTime(line.startTime);
+    const endTime = parseLyricsTime(line.endTime);
     if (
-      !Number.isFinite(line.startTime) ||
-      !Number.isFinite(line.endTime) ||
-      line.endTime <= line.startTime ||
+      !Number.isFinite(startTime) ||
+      !Number.isFinite(endTime) ||
+      endTime <= startTime ||
       !Array.isArray(line.words) ||
       line.words.length === 0
     ) {
@@ -197,21 +206,23 @@ function parseWordLyrics(source) {
     }
 
     const words = line.words.map((word) => {
+      const start = parseLyricsTime(word.start);
+      const end = parseLyricsTime(word.end);
       if (
         typeof word.text !== "string" ||
         !word.text.trim() ||
-        !Number.isFinite(word.start) ||
-        !Number.isFinite(word.end) ||
-        word.end <= word.start
+        !Number.isFinite(start) ||
+        !Number.isFinite(end) ||
+        end <= start
       ) {
         throw new Error("The lyrics file contains an invalid lyric word.");
       }
-      return { text: word.text, start: word.start, end: word.end };
+      return { text: word.text, start, end };
     });
 
     return {
-      start: line.startTime,
-      end: line.endTime,
+      start: startTime,
+      end: endTime,
       text: words.map((word) => word.text).join(" "),
       words,
     };

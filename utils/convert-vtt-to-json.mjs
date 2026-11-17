@@ -28,7 +28,20 @@ const parseTimestamp = (timestamp) => {
     throw new Error(`Invalid VTT timestamp: ${timestamp}`);
   }
 
-  return hours * 3600 + minutes * 60 + seconds + milliseconds / 1000;
+  return ((hours * 60 + minutes) * 60 + seconds) * 1000 + milliseconds;
+};
+
+const formatTimestamp = (milliseconds) => {
+  const hours = Math.floor(milliseconds / 3_600_000);
+  const minutes = Math.floor((milliseconds % 3_600_000) / 60_000);
+  const seconds = Math.floor((milliseconds % 60_000) / 1_000);
+  const remainder = milliseconds % 1_000;
+
+  return [
+    String(hours).padStart(2, '0'),
+    String(minutes).padStart(2, '0'),
+    `${String(seconds).padStart(2, '0')}.${String(remainder).padStart(3, '0')}`,
+  ].join(':');
 };
 
 export const convertVttToJson = (vttContent) => {
@@ -74,17 +87,17 @@ export const convertVttToJson = (vttContent) => {
 
     const text = blockLines.slice(timingLineIndex + 1).join(' ').trim();
     const words = text ? text.split(/\s+/) : [];
-    const wordDuration = words.length ? (endTime - startTime) / words.length : 0;
+    const wordBoundary = (index) => startTime + Math.round(
+      ((endTime - startTime) * index) / words.length,
+    );
 
     lines.push({
-      startTime,
-      endTime,
+      startTime: formatTimestamp(startTime),
+      endTime: formatTimestamp(endTime),
       words: words.map((word, index) => ({
         text: word,
-        start: startTime + index * wordDuration,
-        end: index === words.length - 1
-          ? endTime
-          : startTime + (index + 1) * wordDuration,
+        start: formatTimestamp(wordBoundary(index)),
+        end: formatTimestamp(index === words.length - 1 ? endTime : wordBoundary(index + 1)),
       })),
     });
   }
