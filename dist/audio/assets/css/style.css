@@ -148,6 +148,50 @@ audio {
   background: rgba(7, 8, 8, 0.03);
 }
 
+.playback-controls {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.playback-button {
+  padding: 7px 14px;
+  border: 1px solid rgba(30, 32, 34, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.58);
+  color: #52565a;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease;
+}
+
+.playback-button:hover {
+  border-color: #d66bb2;
+}
+
+/* 
+.playback-button:focus-visible {
+  outline: 3px solid rgba(105, 202, 230, 0.8);
+  outline-offset: 2px;
+}
+
+#playback-error {
+  margin: 0 0 8px;
+  color: #b42318;
+  font-size: 13px;
+  text-align: center;
+}
+
+#playback-error[hidden] {
+  display: none;
+}
+
 @media (max-width: 760px) {
   main {
     grid-template-columns: minmax(0, 1fr);
