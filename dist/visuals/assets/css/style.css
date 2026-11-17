@@ -37,7 +37,7 @@ body {
     );
   background-repeat: no-repeat;
   background-position:
-    left 24px top 24px,
+    center top 24px,
     left top,
     right bottom;
   background-size:

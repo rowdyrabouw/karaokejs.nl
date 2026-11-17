@@ -22,10 +22,27 @@ body {
   align-items: center;
   justify-content: center;
   padding: 32px 20px;
-  background-image: url("../../../assets/img/logo.svg");
+  background-image:
+    url("../../../assets/img/logo.svg"),
+    radial-gradient(
+      ellipse at 12% 18%,
+      rgba(105, 202, 230, 0.3),
+      transparent 42rem
+    ),
+    radial-gradient(
+      ellipse at 88% 82%,
+      rgba(247, 196, 67, 0.28),
+      transparent 44rem
+    );
   background-repeat: no-repeat;
-  background-position: left 24px top 24px;
-  background-size: 112px auto;
+  background-position:
+    center top 24px,
+    left top,
+    right bottom;
+  background-size:
+    112px auto,
+    auto,
+    auto;
 }
 
 main {
