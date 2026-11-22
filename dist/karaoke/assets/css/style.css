@@ -124,18 +124,22 @@ main.is-playing .cover-wrap {
   flex: 1;
   min-height: 260px;
   flex-direction: column;
-  padding: 32px;
+  padding: 32px 32px 0 32px;
   border: 1px solid rgba(7, 8, 8, 0.06);
   border-radius: 16px;
   align-items: stretch;
 }
 
 .visualizer-controls {
-  display: flex;
+  display: none;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 8px;
-  margin-bottom: 12px;
+  margin: 0;
+}
+
+main.is-playing .visualizer-controls {
+  display: flex;
 }
 
 .visualizer-button {
@@ -171,31 +175,28 @@ main.is-playing .cover-wrap {
 
 .visualizer-stage {
   position: relative;
-  display: block;
+  display: none;
   width: 100%;
   min-width: 0;
-  min-height: 214px;
-  flex: 1;
+  height: 300px;
+  flex: 1 0 300px;
 }
 
-.lyrics-overlay {
-  position: absolute;
-  z-index: 2;
-  top: 50%;
-  left: 50%;
+main.is-playing .visualizer-stage {
   display: block;
-  width: max-content;
-  max-width: calc(100% - 96px);
-  padding: 8px 18px 22px 18px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.7);
+}
+
+.lyrics-display {
+  z-index: 100;
+  width: 100%;
+  height: 110px;
+  flex: 0 0 110px;
+  padding: 8px 18px;
+  place-items: center;
   text-align: center;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
   font-size: clamp(24px, 5vw, 60px);
   text-transform: uppercase;
   font-weight: 600;
-  /* text-shadow: 0 4px 12px rgba(7, 8, 8, 0.4); */
   text-shadow:
     -1px -1px 0 #000,
     1px -1px 0 #000,
@@ -203,8 +204,8 @@ main.is-playing .cover-wrap {
     1px 1px 0 #000;
 }
 
-.lyrics-overlay:empty {
-  display: none;
+.lyrics-display:empty {
+  visibility: hidden;
 }
 
 #visualizer {
@@ -285,9 +286,23 @@ main.is-playing .cover-wrap {
   gap: 12px;
 }
 
+.control-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+
+.control-row .visualizer-controls {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
 .track-switch {
   display: flex;
-  justify-content: center;
+  flex: 0 0 auto;
+  justify-content: flex-end;
   gap: 8px;
 }
 

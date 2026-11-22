@@ -685,7 +685,7 @@ if ("ResizeObserver" in window) {
 resizeCanvas();
 
 const lyricLeadIn = 0.85;
-const lyricsOverlay = document.querySelector(".lyrics-overlay");
+const lyricsDisplay = document.querySelector(".lyrics-display");
 
 let cues = [];
 let activeCueIndex = -1;
@@ -776,12 +776,12 @@ function renderCue(cue) {
   });
 
   if (cue?.words.length) {
-    lyricsOverlay.style.textAlign = "center";
-    lyricsOverlay.style.fontWeight = "600";
-    lyricsOverlay.style.lineHeight = "1.5";
+    lyricsDisplay.style.textAlign = "center";
+    lyricsDisplay.style.fontWeight = "600";
+    lyricsDisplay.style.lineHeight = "1.4";
   }
 
-  lyricsOverlay.replaceChildren(fragment);
+  lyricsDisplay.replaceChildren(fragment);
 }
 
 function updateLyricHighlight(time, cue) {
@@ -794,7 +794,8 @@ function updateLyricHighlight(time, cue) {
     if (time >= word.start && time < word.end) {
       wordElement.style.color = "#d66bb2";
       wordElement.style.textDecoration = "underline";
-      wordElement.style.textUnderlineOffset = "12px";
+      wordElement.style.textDecorationStyle = "wavy";
+      wordElement.style.textUnderlineOffset = "14px";
       wordElement.style.textDecorationThickness = "8px";
       wordElement.style.textDecorationColor = "#A1DCF2";
     } else if (time >= word.end) {
@@ -861,15 +862,15 @@ async function loadLyrics() {
     }
     updateActiveCue(audio.currentTime);
   } catch (error) {
-    lyricsOverlay.textContent = error.message || "Couldn't load the lyrics.";
+    lyricsDisplay.textContent = error.message || "Couldn't load the lyrics.";
     statusBox.dataset.error = "true";
     console.error("Couldn't load karaoke lyrics.", error);
   }
 }
 
-if (!audio || !statusBox || !lyricsOverlay) {
+if (!audio || !statusBox || !lyricsDisplay) {
   throw new Error(
-    "The karaoke page is missing its audio player, status box, or lyrics overlay.",
+    "The karaoke page is missing its audio player, status box, or lyrics display.",
   );
 }
 
