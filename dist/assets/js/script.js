@@ -4,6 +4,7 @@ const pageOrder = [
   { path: "/lyrics/vtt/", name: "VTT Lyrics" },
   { path: "/lyrics/json/", name: "JSON Lyrics" },
   { path: "/visuals/", name: "Visuals" },
+  { path: "/karaoke/", name: "Karaoke" },
 ];
 
 class PageOrderMenu extends HTMLElement {
@@ -108,7 +109,7 @@ if (!document.querySelector("page-order-menu")) {
 }
 
 document.addEventListener("keydown", (event) => {
-  if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") {
+  if (event.key !== "p" && event.key !== "n") {
     return;
   }
 
@@ -116,7 +117,7 @@ document.addEventListener("keydown", (event) => {
     .replace(/\/index\.html$/, "")
     .replace(/\/?$/, "/");
   const currentIndex = pageOrder.findIndex((page) => page.path === currentPage);
-  const direction = event.key === "ArrowRight" ? 1 : -1;
+  const direction = event.key === "n" ? 1 : -1;
   const destination = pageOrder[currentIndex + direction];
 
   if (currentIndex >= 0 && destination) {

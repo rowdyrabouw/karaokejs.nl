@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Breathless — Karaoke</title>
+    <script src="/assets/js/script.js" defer></script>
+    <script src="assets/js/visuals.js" defer></script>
+    <script src="assets/js/lyrics.js" defer></script>
+    <link rel="stylesheet" href="assets/css/style.css?v=4" />
+  </head>
+  <body>
+    <main>
+      <div class="cover-wrap">
+        <img
+          class="cover-art"
+          src="assets/img/snow-patrol.jpg"
+          alt="Snow Patrol"
+        />
+        <div class="cover-caption">Snow Patrol - Chasing Cars</div>
+      </div>
+
+      <div class="info-panel">
+        <div class="status-box">
+          <div
+            class="visualizer-controls"
+            role="group"
+            aria-label="Visualizer type"
+          >
+            <button
+              class="visualizer-button is-selected"
+              type="button"
+              data-visualizer="waveform"
+              aria-pressed="true"
+            >
+              Waveform
+            </button>
+            <button
+              class="visualizer-button"
+              type="button"
+              data-visualizer="frequency"
+              aria-pressed="false"
+            >
+              Frequency
+            </button>
+            <button
+              class="visualizer-button"
+              type="button"
+              data-visualizer="radial"
+              aria-pressed="false"
+            >
+              Radial
+            </button>
+            <button
+              class="visualizer-button"
+              type="button"
+              data-visualizer="terrain"
+              aria-pressed="false"
+            >
+              Mountain
+            </button>
+            <button
+              class="visualizer-button"
+              type="button"
+              data-visualizer="particles"
+              aria-pressed="false"
+            >
+              Particles
+            </button>
+          </div>
+          <div class="visualizer-stage">
+            <canvas id="visualizer" role="img" aria-label="Live audio waveform">
+              Live audio waveform
+            </canvas>
+            <p id="visualizer-error" role="alert" hidden></p>
+            <div class="lyrics-overlay" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <div class="player-shell">
+          <audio controls>
+            <source
+              src="assets/mp3/snow-patrol-chasing-cars-original.mp3"
+              type="audio/mpeg"
+            />
+          </audio>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
