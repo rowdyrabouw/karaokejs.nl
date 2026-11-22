@@ -85,12 +85,76 @@
         </div>
 
         <div class="player-shell">
-          <audio controls>
-            <source
-              src="assets/mp3/snow-patrol-chasing-cars-original.mp3"
-              type="audio/mpeg"
-            />
-          </audio>
+          <div class="track-switch" role="group" aria-label="Audio track">
+            <button
+              class="track-button is-selected"
+              type="button"
+              data-track="vocals"
+              aria-pressed="true"
+            >
+              With vocals
+            </button>
+            <button
+              class="track-button"
+              type="button"
+              data-track="instrumental"
+              aria-pressed="false"
+            >
+              Without vocals
+            </button>
+          </div>
+          <div class="player-controls">
+            <button
+              class="play-button"
+              id="playback-toggle"
+              type="button"
+              aria-label="Play"
+              title="Play"
+            >
+              <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m8 5 11 7-11 7z" />
+              </svg>
+              <svg class="pause-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 5h4v14H7zM15 5h4v14h-4z" />
+              </svg>
+            </button>
+            <div class="timeline">
+              <span class="time" id="current-time">0:00</span>
+              <label class="sr-only" for="seek">Seek through song</label>
+              <input
+                class="range seek-range"
+                id="seek"
+                type="range"
+                min="0"
+                max="100"
+                value="0"
+                step="0.1"
+                aria-valuetext="0:00 of 0:00"
+              />
+              <span class="time" id="duration">0:00</span>
+            </div>
+            <label class="volume-control">
+              <span class="sr-only">Volume</span>
+              <input
+                class="range volume-range"
+                id="volume"
+                type="range"
+                min="0"
+                max="1"
+                value="1"
+                step="0.01"
+              />
+            </label>
+          </div>
+          <p class="player-message" id="player-message" role="status"></p>
+          <audio
+            id="audio"
+            preload="metadata"
+            src="assets/mp3/snow-patrol-chasing-cars-original.mp3"
+            data-active-track="vocals"
+            data-vocals="assets/mp3/snow-patrol-chasing-cars-original.mp3"
+            data-instrumental="assets/mp3/snow-patrol-chasing-cars-instrumental.mp3"
+          ></audio>
         </div>
       </div>
     </main>

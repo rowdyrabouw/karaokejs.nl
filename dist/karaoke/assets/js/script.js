@@ -5,6 +5,13 @@ const visualizerStage = document.querySelector(".visualizer-stage");
 const errorMessage = document.querySelector("#visualizer-error");
 const statusBox = document.querySelector(".status-box");
 const visualizerButtons = document.querySelectorAll("[data-visualizer]");
+const trackButtons = document.querySelectorAll("[data-track]");
+const playbackButton = document.querySelector("#playback-toggle");
+const seekSlider = document.querySelector("#seek");
+const volumeSlider = document.querySelector("#volume");
+const currentTimeLabel = document.querySelector("#current-time");
+const durationLabel = document.querySelector("#duration");
+const playerMessage = document.querySelector("#player-message");
 const randomVisualizerButton = document.querySelector(
   "[data-random-visualizer]",
 );
@@ -20,6 +27,7 @@ let particles = [];
 let previousBassEnergy = 0;
 let beatPulse = 0;
 let beatCooldown = 0;
+let trackChangeId = 0;
 const cloverColors = ["#169b62", "#ffffff", "#ff883e"];
 const cloverOutlineColors = ["#0d7548", "#a9b5ad", "#cf642c"];
 const cloverVeinColors = [
@@ -472,6 +480,127 @@ function showVisualizerError(error) {
   errorMessage.textContent = error.message || "Audio visualizer unavailable.";
   errorMessage.hidden = false;
 }
+
+function formatTime(seconds) {
+  if (!Number.isFinite(seconds) || seconds < 0) {
+    return "0:00";
+  }
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+  return `${minutes}:${String(remainingSeconds).padStart(2, "0")}`;
+}
+
+function updatePlayerControls() {
+  const duration = Number.isFinite(audio.duration) ? audio.duration : 0;
+  const progress = duration > 0 ? (audio.currentTime / duration) * 100 : 0;
+  const volume = audio.muted ? 0 : audio.volume;
+
+  playbackButton.setAttribute(
+    "aria-label",
+    audio.paused ? "Play" : "Pause",
+  );
+  playbackButton.title = audio.paused ? "Play" : "Pause";
+  seekSlider.value = String(progress);
+  seekSlider.style.setProperty("--progress", `${progress}%`);
+  seekSlider.setAttribute(
+    "aria-valuetext",
+    `${formatTime(audio.currentTime)} of ${formatTime(duration)}`,
+  );
+  currentTimeLabel.textContent = formatTime(audio.currentTime);
+  durationLabel.textContent = formatTime(duration);
+  volumeSlider.value = String(volume);
+  volumeSlider.style.setProperty("--volume", `${volume * 100}%`);
+}
+
+function showPlayerError(error) {
+  console.error("Could not play the selected track.", error);
+  playerMessage.textContent = error.message || "Couldn't start audio playback.";
+}
+
+playbackButton.addEventListener("click", () => {
+  playerMessage.textContent = "";
+  if (audio.paused) {
+    if (audio.ended) {
+      audio.currentTime = 0;
+    }
+    audio.play().catch(showPlayerError);
+  } else {
+    audio.pause();
+  }
+});
+
+seekSlider.addEventListener("input", () => {
+  if (Number.isFinite(audio.duration)) {
+    audio.currentTime = (Number(seekSlider.value) / 100) * audio.duration;
+  }
+});
+
+volumeSlider.addEventListener("input", () => {
+  audio.volume = Number(volumeSlider.value);
+  audio.muted = audio.volume === 0;
+  updatePlayerControls();
+});
+
+trackButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const track = button.dataset.track;
+    if (audio.dataset.activeTrack === track) {
+      return;
+    }
+
+    const position = audio.currentTime;
+    const shouldResume = !audio.paused;
+    const source = audio.dataset[track];
+    const changeId = ++trackChangeId;
+
+    audio.pause();
+    audio.dataset.activeTrack = track;
+    trackButtons.forEach((trackButton) => {
+      const isSelected = trackButton === button;
+      trackButton.classList.toggle("is-selected", isSelected);
+      trackButton.setAttribute("aria-pressed", String(isSelected));
+    });
+    playerMessage.textContent = "";
+
+    audio.src = source;
+    audio.addEventListener(
+      "loadedmetadata",
+      () => {
+        if (changeId !== trackChangeId) {
+          return;
+        }
+        audio.currentTime = Math.min(position, audio.duration);
+        updatePlayerControls();
+        if (shouldResume) {
+          audio.play().catch(showPlayerError);
+        }
+      },
+      { once: true },
+    );
+    audio.load();
+  });
+});
+
+[
+  "durationchange",
+  "loadedmetadata",
+  "timeupdate",
+  "play",
+  "pause",
+  "ended",
+  "volumechange",
+].forEach((eventName) => {
+  audio.addEventListener(eventName, updatePlayerControls);
+});
+audio.addEventListener("error", () => {
+  if (audio.error?.code === MediaError.MEDIA_ERR_ABORTED) {
+    return;
+  }
+  const error = new Error("The selected audio track couldn't be loaded.");
+  console.error(error);
+  playerMessage.textContent = error.message;
+});
+updatePlayerControls();
 
 audio.addEventListener("play", async () => {
   statusBox.dataset.error = "false";
