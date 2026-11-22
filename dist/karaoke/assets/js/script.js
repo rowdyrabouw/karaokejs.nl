@@ -5,12 +5,16 @@ const visualizerStage = document.querySelector(".visualizer-stage");
 const errorMessage = document.querySelector("#visualizer-error");
 const statusBox = document.querySelector(".status-box");
 const visualizerButtons = document.querySelectorAll("[data-visualizer]");
+const randomVisualizerButton = document.querySelector(
+  "[data-random-visualizer]",
+);
 
 let audioContext;
 let analyser;
 let waveform;
 let frequency;
 let animationFrame = null;
+let randomVisualsInterval = null;
 let visualizerType = "waveform";
 let particles = [];
 let previousBassEnergy = 0;
@@ -490,32 +494,63 @@ function stopVisualizer() {
   drawVisualizer();
 }
 
+function selectVisualizer(type) {
+  visualizerType = type;
+  visualizerButtons.forEach((button) => {
+    const isSelected = button.dataset.visualizer === type;
+    button.classList.toggle("is-selected", isSelected);
+    button.setAttribute("aria-pressed", String(isSelected));
+  });
+  const visualizerLabels = {
+    waveform: "waveform",
+    frequency: "frequency spectrum",
+    radial: "radial frequency spectrum",
+    particles: "reactive particles",
+    terrain: "mountain terrain waveform",
+  };
+  const label = visualizerLabels[visualizerType];
+  canvas.setAttribute("aria-label", `Live audio ${label}`);
+  canvas.textContent = `Live audio ${label}`;
+  errorMessage.hidden = true;
+  statusBox.dataset.error = "false";
+  if (visualizerType === "particles") {
+    const { width, height } = visualizerStage.getBoundingClientRect();
+    initializeParticles(width, height);
+  }
+  drawVisualizer();
+}
+
+function chooseRandomVisualizer() {
+  const availableVisualizers = Array.from(visualizerButtons)
+    .map((button) => button.dataset.visualizer)
+    .filter((type) => type !== visualizerType);
+  const randomIndex = Math.floor(Math.random() * availableVisualizers.length);
+  selectVisualizer(availableVisualizers[randomIndex]);
+}
+
 visualizerButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    visualizerType = button.dataset.visualizer;
-    visualizerButtons.forEach((visualizerButton) => {
-      const isSelected = visualizerButton === button;
-      visualizerButton.classList.toggle("is-selected", isSelected);
-      visualizerButton.setAttribute("aria-pressed", String(isSelected));
-    });
-    const visualizerLabels = {
-      waveform: "waveform",
-      frequency: "frequency spectrum",
-      radial: "radial frequency spectrum",
-      particles: "reactive particles",
-      terrain: "mountain terrain waveform",
-    };
-    const label = visualizerLabels[visualizerType];
-    canvas.setAttribute("aria-label", `Live audio ${label}`);
-    canvas.textContent = `Live audio ${label}`;
-    errorMessage.hidden = true;
-    statusBox.dataset.error = "false";
-    if (visualizerType === "particles") {
-      const { width, height } = visualizerStage.getBoundingClientRect();
-      initializeParticles(width, height);
-    }
-    drawVisualizer();
+    clearInterval(randomVisualsInterval);
+    randomVisualsInterval = null;
+    randomVisualizerButton.classList.remove("is-selected");
+    randomVisualizerButton.setAttribute("aria-pressed", "false");
+    selectVisualizer(button.dataset.visualizer);
   });
+});
+
+randomVisualizerButton.addEventListener("click", () => {
+  if (randomVisualsInterval !== null) {
+    clearInterval(randomVisualsInterval);
+    randomVisualsInterval = null;
+    randomVisualizerButton.classList.remove("is-selected");
+    randomVisualizerButton.setAttribute("aria-pressed", "false");
+    return;
+  }
+
+  randomVisualizerButton.classList.add("is-selected");
+  randomVisualizerButton.setAttribute("aria-pressed", "true");
+  chooseRandomVisualizer();
+  randomVisualsInterval = setInterval(chooseRandomVisualizer, 10_000);
 });
 
 audio.addEventListener("pause", stopVisualizer);
