@@ -12,6 +12,7 @@ const volumeSlider = document.querySelector("#volume");
 const currentTimeLabel = document.querySelector("#current-time");
 const durationLabel = document.querySelector("#duration");
 const playerMessage = document.querySelector("#player-message");
+const pageLayout = document.querySelector("main");
 const randomVisualizerButton = document.querySelector(
   "[data-random-visualizer]",
 );
@@ -145,10 +146,7 @@ function drawFrequencySpectrum(width, height) {
       frequency.length - 1,
       Math.floor(progress * progress * frequency.length * 0.8),
     );
-    const barHeight = Math.max(
-      2,
-      (frequency[bin] / 255) * maxBarHeight,
-    );
+    const barHeight = Math.max(2, (frequency[bin] / 255) * maxBarHeight);
     const x = index * (barWidth + gap);
     context.fillRect(x, height - barHeight, barWidth, barHeight);
   }
@@ -344,12 +342,7 @@ function drawClover(radius) {
 
     context.beginPath();
     context.moveTo(0, -radius * 0.12);
-    context.quadraticCurveTo(
-      radius * 0.04,
-      -radius * 0.42,
-      0,
-      -radius * 0.76,
-    );
+    context.quadraticCurveTo(radius * 0.04, -radius * 0.42, 0, -radius * 0.76);
     context.strokeStyle = cloverVeinColors[leaf];
     context.lineWidth = Math.max(0.7, radius * 0.035);
     context.stroke();
@@ -495,10 +488,7 @@ function updatePlayerControls() {
   const progress = duration > 0 ? (audio.currentTime / duration) * 100 : 0;
   const volume = audio.muted ? 0 : audio.volume;
 
-  playbackButton.setAttribute(
-    "aria-label",
-    audio.paused ? "Play" : "Pause",
-  );
+  playbackButton.setAttribute("aria-label", audio.paused ? "Play" : "Pause");
   playbackButton.title = audio.paused ? "Play" : "Pause";
   seekSlider.value = String(progress);
   seekSlider.style.setProperty("--progress", `${progress}%`);
@@ -603,6 +593,7 @@ audio.addEventListener("error", () => {
 updatePlayerControls();
 
 audio.addEventListener("play", async () => {
+  pageLayout?.classList.add("is-playing");
   statusBox.dataset.error = "false";
   errorMessage.hidden = true;
   try {
@@ -776,7 +767,9 @@ function renderCue(cue) {
     }
     const wordElement = document.createElement("span");
     wordElement.textContent = word.text;
-    wordElement.style.color = "rgba(30, 32, 34, 0.35)";
+    // wordElement.style.color = "rgba(30, 32, 34, 0.35)";
+    wordElement.style.color = "rgb(200,200,200)";
+
     wordElement.style.transition = "color 100ms linear";
     lyricWords.push(wordElement);
     fragment.append(wordElement);
@@ -784,7 +777,6 @@ function renderCue(cue) {
 
   if (cue?.words.length) {
     lyricsOverlay.style.textAlign = "center";
-    lyricsOverlay.style.fontSize = "clamp(24px, 3vw, 40px)";
     lyricsOverlay.style.fontWeight = "600";
     lyricsOverlay.style.lineHeight = "1.5";
   }
@@ -809,7 +801,8 @@ function updateLyricHighlight(time, cue) {
       wordElement.style.color = "var(--text)";
       wordElement.style.textDecoration = "none";
     } else {
-      wordElement.style.color = "rgba(30, 32, 34, 0.35)";
+      // wordElement.style.color = "rgba(30, 32, 34, 0.35)";
+      wordElement.style.color = "rgb(200,200,200)";
       wordElement.style.textDecoration = "none";
     }
   });

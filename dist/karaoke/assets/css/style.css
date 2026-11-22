@@ -60,7 +60,16 @@ main {
   background: var(--card);
   box-shadow: 0 18px 50px var(--shadow);
   backdrop-filter: blur(12px);
-  height: 538px;
+  /* height: 538px; */
+}
+
+main.is-playing {
+  grid-template-columns: minmax(0, 1fr);
+  height: 700px;
+}
+
+main.is-playing .cover-wrap {
+  display: none;
 }
 
 .cover-wrap {
@@ -176,13 +185,22 @@ main {
   left: 50%;
   display: block;
   width: max-content;
-  max-width: calc(100% - 32px);
+  max-width: calc(100% - 96px);
   padding: 8px 18px 22px 18px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.7);
   text-align: center;
   pointer-events: none;
   transform: translate(-50%, -50%);
+  font-size: clamp(24px, 5vw, 60px);
+  text-transform: uppercase;
+  font-weight: 600;
+  /* text-shadow: 0 4px 12px rgba(7, 8, 8, 0.4); */
+  text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
 }
 
 .lyrics-overlay:empty {
@@ -227,7 +245,7 @@ main {
   width: fit-content;
   max-width: 100%;
   margin-inline: auto;
-  font-size: clamp(24px, 3vw, 36px);
+  font-size: clamp(24px, 5vw, 60px);
   font-weight: 600;
   line-height: 1.5;
   text-align: center;
