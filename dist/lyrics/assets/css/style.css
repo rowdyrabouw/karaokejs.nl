@@ -9,6 +9,12 @@
   --shadow: rgba(7, 8, 8, 0.14);
 }
 
+:root[data-theme="dark"] {
+  --text: #f2f4f5;
+  --card: rgba(27, 31, 35, 0.88);
+  --shadow: rgba(0, 0, 0, 0.48);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -46,6 +52,22 @@ body {
     auto;
 }
 
+:root[data-theme="dark"] body {
+  background-color: #101316;
+  background-image:
+    url("../../../assets/img/logo.svg"),
+    radial-gradient(
+      ellipse at 12% 18%,
+      rgba(105, 202, 230, 0.12),
+      transparent 42rem
+    ),
+    radial-gradient(
+      ellipse at 88% 82%,
+      rgba(247, 196, 67, 0.1),
+      transparent 44rem
+    );
+}
+
 main {
   display: grid;
   grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
@@ -59,6 +81,10 @@ main {
   background: var(--card);
   box-shadow: 0 18px 50px var(--shadow);
   backdrop-filter: blur(12px);
+}
+
+:root[data-theme="dark"] main {
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .cover-wrap {
