@@ -4,12 +4,7 @@
 }
 
 :root {
-  --text: #1e2022;
-  --card: rgba(255, 255, 255, 0.78);
-  --shadow: rgba(7, 8, 8, 0.14);
-}
-
-:root[data-theme="dark"] {
+  color-scheme: dark;
   --text: #f2f4f5;
   --card: rgba(27, 31, 35, 0.88);
   --shadow: rgba(0, 0, 0, 0.48);
@@ -28,31 +23,6 @@ body {
   align-items: center;
   justify-content: center;
   padding: 32px 20px;
-  background-color: #f8fafb;
-  background-image:
-    url("../../../assets/img/logo.svg"),
-    radial-gradient(
-      ellipse at 12% 18%,
-      rgba(105, 202, 230, 0.3),
-      transparent 42rem
-    ),
-    radial-gradient(
-      ellipse at 88% 82%,
-      rgba(247, 196, 67, 0.28),
-      transparent 44rem
-    );
-  background-repeat: no-repeat;
-  background-position:
-    center top 24px,
-    left top,
-    right bottom;
-  background-size:
-    112px auto,
-    auto,
-    auto;
-}
-
-:root[data-theme="dark"] body {
   background-color: #101316;
   background-image:
     url("../../../assets/img/logo.svg"),
@@ -66,6 +36,15 @@ body {
       rgba(247, 196, 67, 0.1),
       transparent 44rem
     );
+  background-repeat: no-repeat;
+  background-position:
+    center top 24px,
+    left top,
+    right bottom;
+  background-size:
+    112px auto,
+    auto,
+    auto;
 }
 
 main {
@@ -77,16 +56,12 @@ main {
   min-width: 0;
   margin: 0 auto;
   padding: 28px;
-  border: 1px solid rgba(7, 8, 8, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 28px;
   background: var(--card);
   box-shadow: 0 18px 50px var(--shadow);
   backdrop-filter: blur(12px);
   height: 538px;
-}
-
-:root[data-theme="dark"] main {
-  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .cover-wrap {
@@ -142,7 +117,7 @@ main {
   min-height: 260px;
   flex-direction: column;
   padding: 32px;
-  border: 1px solid rgba(7, 8, 8, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   align-items: stretch;
 }
@@ -157,10 +132,10 @@ main {
 
 .visualizer-button {
   padding: 7px 14px;
-  border: 1px solid rgba(30, 32, 34, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.58);
-  color: #52565a;
+  background: rgba(255, 255, 255, 0.08);
+  color: #dfe3e6;
   cursor: pointer;
   font: inherit;
   font-size: 13px;
@@ -216,7 +191,7 @@ main {
   place-items: center;
   margin: 0;
   padding: 16px;
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(27, 31, 35, 0.96);
   color: #b42318;
   font-size: 14px;
   text-align: center;

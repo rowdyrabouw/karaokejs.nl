@@ -7,26 +7,6 @@ const pageOrder = [
   { path: "/karaoke/", name: "Karaoke" },
 ];
 
-const themeStorageKey = "karaoke-theme";
-
-function getPreferredTheme() {
-  const storedTheme = localStorage.getItem(themeStorageKey);
-  if (storedTheme === "light" || storedTheme === "dark") {
-    return storedTheme;
-  }
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
-}
-
-function applyTheme(theme) {
-  document.documentElement.dataset.theme = theme;
-  document.documentElement.style.colorScheme = theme;
-  localStorage.setItem(themeStorageKey, theme);
-}
-
-applyTheme(getPreferredTheme());
-
 class PageOrderMenu extends HTMLElement {
   constructor() {
     super();
@@ -72,12 +52,6 @@ class PageOrderMenu extends HTMLElement {
         backdrop-filter: blur(12px);
       }
 
-      .theme-toggle {
-        width: 38px;
-        padding-inline: 0;
-        font-size: 16px;
-      }
-
       nav::-webkit-scrollbar {
         display: none;
       }
@@ -121,32 +95,6 @@ class PageOrderMenu extends HTMLElement {
       });
       navigation.append(button);
     }
-
-    const themeToggle = document.createElement("button");
-    themeToggle.type = "button";
-    themeToggle.className = "theme-toggle";
-    themeToggle.addEventListener("click", () => {
-      const nextTheme =
-        document.documentElement.dataset.theme === "dark" ? "light" : "dark";
-      applyTheme(nextTheme);
-      updateThemeToggle();
-    });
-
-    const updateThemeToggle = () => {
-      const isDark = document.documentElement.dataset.theme === "dark";
-      themeToggle.textContent = isDark ? "☀" : "☾";
-      themeToggle.setAttribute(
-        "aria-label",
-        isDark ? "Switch to light mode" : "Switch to dark mode",
-      );
-      themeToggle.setAttribute("aria-pressed", String(isDark));
-      themeToggle.title = isDark
-        ? "Switch to light mode"
-        : "Switch to dark mode";
-    };
-
-    updateThemeToggle();
-    navigation.append(themeToggle);
 
     this.shadowRoot.append(style, navigation);
   }
