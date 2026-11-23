@@ -20,12 +20,12 @@ body {
   color: var(--text);
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 32px 20px;
+  justify-content: flex-start;
+  padding: 40px 20px 32px;
   background-color: #101316;
   background-image:
-    url("../../../assets/img/logo.svg"),
     radial-gradient(
       ellipse at 12% 18%,
       rgba(105, 202, 230, 0.12),
@@ -38,13 +38,25 @@ body {
     );
   background-repeat: no-repeat;
   background-position:
-    center top 24px,
     left top,
     right bottom;
   background-size:
-    112px auto,
     auto,
     auto;
+}
+
+.page-logo {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.page-logo img {
+  display: block;
+  width: 120px;
+  height: auto;
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.7));
 }
 
 main {

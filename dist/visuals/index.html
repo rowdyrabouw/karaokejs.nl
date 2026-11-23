@@ -3,12 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Breathless — Karaoke</title>
+    <title>KaraokeJS</title>
     <script src="/assets/js/script.js" defer></script>
     <script src="assets/js/script.js?v=14" defer></script>
     <link rel="stylesheet" href="assets/css/style.css?v=4" />
   </head>
   <body>
+    <header class="page-logo">
+      <img src="../assets/img/logo.svg" alt="KaraokeJS" />
+    </header>
     <main>
       <div class="cover-wrap">
         <img class="cover-art" src="assets/img/obskur.jpg" alt="Obskür" />
@@ -64,11 +67,7 @@
             </button>
           </div>
           <div class="visualizer-stage">
-            <canvas
-              id="visualizer"
-              role="img"
-              aria-label="Live audio waveform"
-            >
+            <canvas id="visualizer" role="img" aria-label="Live audio waveform">
               Live audio waveform
             </canvas>
             <p id="visualizer-error" role="alert" hidden></p>

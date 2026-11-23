@@ -5,6 +5,13 @@ const playButton = document.getElementById("play-audio");
 const pauseButton = document.getElementById("pause-audio");
 const playbackError = document.getElementById("playback-error");
 
+audio.addEventListener("focus", () => {
+  // alert(
+  //   "Audio element focused. Use the play and pause buttons to control playback.",
+  // );
+  audio.blur();
+});
+
 audio.addEventListener("play", () => {
   playbackError.hidden = true;
 });

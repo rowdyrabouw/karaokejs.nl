@@ -3,12 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Breathless — Karaoke</title>
+    <title>KaraokeJS</title>
     <script src="/assets/js/script.js" defer></script>
     <script src="assets/js/script.js" defer></script>
     <link rel="stylesheet" href="assets/css/style.css" />
   </head>
   <body>
+    <header class="page-logo">
+      <img src="../assets/img/logo.svg" alt="KaraokeJS" />
+    </header>
     <main>
       <div class="cover-wrap">
         <img
@@ -39,7 +42,7 @@
         </div>
 
         <div class="player-shell">
-          <audio controls>
+          <audio controls tabindex="-1">
             <source
               src="assets/mp3/the-script-the-man-who-can-t-be-moved.mp3"
               type="audio/mpeg"
