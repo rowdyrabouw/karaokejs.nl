@@ -113,7 +113,7 @@ function drawWaveform(width, height) {
   context.shadowBlur = 0;
 }
 
-function drawFrequencySpectrum(width, height) {
+const drawFrequencySpectrum = (width, height) => {
   const barCount = Math.min(72, Math.max(12, Math.floor(width / 8)));
   const gap = 3;
   const barWidth = (width - gap * (barCount - 1)) / barCount;
@@ -133,16 +133,13 @@ function drawFrequencySpectrum(width, height) {
       frequency.length - 1,
       Math.floor(progress * progress * frequency.length * 0.8),
     );
-    const barHeight = Math.max(
-      2,
-      (frequency[bin] / 255) * maxBarHeight,
-    );
+    const barHeight = Math.max(2, (frequency[bin] / 255) * maxBarHeight);
     const x = index * (barWidth + gap);
     context.fillRect(x, height - barHeight, barWidth, barHeight);
   }
 
   context.shadowBlur = 0;
-}
+};
 
 function drawRadialSpectrum(width, height) {
   const centerX = width / 2;
@@ -332,12 +329,7 @@ function drawClover(radius) {
 
     context.beginPath();
     context.moveTo(0, -radius * 0.12);
-    context.quadraticCurveTo(
-      radius * 0.04,
-      -radius * 0.42,
-      0,
-      -radius * 0.76,
-    );
+    context.quadraticCurveTo(radius * 0.04, -radius * 0.42, 0, -radius * 0.76);
     context.strokeStyle = cloverVeinColors[leaf];
     context.lineWidth = Math.max(0.7, radius * 0.035);
     context.stroke();

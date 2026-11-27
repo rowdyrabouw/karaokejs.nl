@@ -6,9 +6,6 @@ const pauseButton = document.getElementById("pause-audio");
 const playbackError = document.getElementById("playback-error");
 
 audio.addEventListener("focus", () => {
-  // alert(
-  //   "Audio element focused. Use the play and pause buttons to control playback.",
-  // );
   audio.blur();
 });
 
@@ -24,8 +21,7 @@ playButton.addEventListener("click", async () => {
     if (error.name === "AbortError") {
       return;
     }
-    playbackError.textContent =
-      error.message || "Could not start audio playback.";
+    playbackError.textContent = error.message || "Could not start audio playback.";
     playbackError.hidden = false;
   }
 });

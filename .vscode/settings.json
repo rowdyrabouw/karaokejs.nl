@@ -1,11 +1,7 @@
 {
   "workbench.colorTheme": "Monokai Pro",
-  // "workbench.colorTheme": "GitHub Dark High Contrast",
-    "workbench.colorCustomizations": {
-      "editor.background": "#000000",
-  },
   "files.autoSave": "onFocusChange",
-  "prettier.printWidth": 150,
+  "prettier.printWidth": 80,
   "editor.formatOnSave": true,
   "editor.fontSize": 14,
   "editor.fontFamily": "'Mono Lisa', Menlo, Monaco, 'Courier New', monospace",

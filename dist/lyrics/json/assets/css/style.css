@@ -1,0 +1,17 @@
+.lyric-word-future {
+  color: rgba(200, 200, 200, 0.5);
+  text-decoration: none;
+}
+
+.lyric-word-active {
+  color: #d66bb2;
+  text-decoration: underline;
+  text-underline-offset: 12px;
+  text-decoration-thickness: 8px;
+  text-decoration-color: rgb(161, 220, 242);
+}
+
+.lyric-word-past {
+  color: var(--text);
+  text-decoration: none;
+}

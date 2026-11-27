@@ -82,8 +82,6 @@ function renderCue(cue) {
     }
     const wordElement = document.createElement("span");
     wordElement.textContent = word.text;
-    wordElement.style.color = "rgba(30, 32, 34, 0.35)";
-    wordElement.style.transition = "color 100ms linear";
     lyricWords.push(wordElement);
     fragment.append(wordElement);
   });
@@ -98,7 +96,7 @@ function renderCue(cue) {
   statusBox.replaceChildren(fragment);
 }
 
-function updateLyricHighlight(time, cue) {
+const updateLyricHighlight = (time, cue) => {
   if (!cue) {
     return;
   }
@@ -106,20 +104,16 @@ function updateLyricHighlight(time, cue) {
   cue.words.forEach((word, index) => {
     const wordElement = lyricWords[index];
     if (time >= word.start && time < word.end) {
-      wordElement.style.color = "#d66bb2";
-      wordElement.style.textDecoration = "underline";
-      wordElement.style.textUnderlineOffset = "12px";
-      wordElement.style.textDecorationThickness = "8px";
-      wordElement.style.textDecorationColor = "#A1DCF2";
+      wordElement.classList.add("lyric-word-active");
+      wordElement.classList.remove("lyric-word-future");
     } else if (time >= word.end) {
-      wordElement.style.color = "var(--text)";
-      wordElement.style.textDecoration = "none";
+      wordElement.classList.add("lyric-word-past");
+      wordElement.classList.remove("lyric-word-active");
     } else {
-      wordElement.style.color = "rgba(30, 32, 34, 0.35)";
-      wordElement.style.textDecoration = "none";
+      wordElement.classList.add("lyric-word-future");
     }
   });
-}
+};
 
 function updateActiveCue(time) {
   let low = 0;

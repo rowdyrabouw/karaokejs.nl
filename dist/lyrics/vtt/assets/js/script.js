@@ -103,7 +103,7 @@ function renderCue(cue) {
   statusBox.replaceChildren(lyricBlock);
 }
 
-function updateActiveCue(time) {
+const updateActiveCue = (time) => {
   let low = 0;
   let high = cues.length - 1;
   let candidate = -1;
@@ -150,16 +150,16 @@ function updateActiveCue(time) {
       );
     });
   }
-}
+};
 
-function animateLyrics() {
+const animateLyrics = () => {
   updateActiveCue(audio.currentTime);
   if (!audio.paused && !audio.ended) {
     lyricAnimationFrame = requestAnimationFrame(animateLyrics);
   } else {
     lyricAnimationFrame = null;
   }
-}
+};
 
 function stopLyricAnimation() {
   if (lyricAnimationFrame !== null) {

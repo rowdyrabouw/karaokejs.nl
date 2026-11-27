@@ -26,16 +26,6 @@ class PageOrderMenu extends HTMLElement {
 
     const style = document.createElement("style");
     style.textContent = `
-      :host {
-        position: fixed;
-        z-index: 1000;
-        right: 16px;
-        bottom: 16px;
-        left: 16px;
-        display: flex;
-        justify-content: center;
-        pointer-events: none;
-      }
 
       nav {
         display: flex;
